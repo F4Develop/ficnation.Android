@@ -27,7 +27,8 @@ export function MobileHeader({
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0b0f19]/90 backdrop-blur-xl border-b border-purple-500/15 px-4 h-14 flex items-center justify-between shadow-sm select-none">
+    <header className="sticky top-0 z-40 bg-[#0b0f19]/90 backdrop-blur-xl border-b border-purple-500/15 pt-safe select-none shadow-sm">
+      <div className="px-4 h-14 flex items-center justify-between">
       {/* Lado izquierdo: Botón Atrás o Título Solo Texto FicNation (Sin logo cuadrado) */}
       <div className="flex items-center gap-2.5">
         {showBack ? (
@@ -101,6 +102,7 @@ export function MobileHeader({
           </button>
         )}
       </div>
-    </header>
+    </div>
+  </header>
   );
 }

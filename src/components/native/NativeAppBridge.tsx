@@ -51,7 +51,7 @@ export function NativeAppBridge() {
     <>
       {/* Banner flotante de Sin Conexión */}
       {isOffline && (
-        <div className="fixed top-2 inset-x-4 z-50 p-2.5 rounded-2xl bg-amber-950/90 border border-amber-500/50 text-amber-200 text-xs font-bold flex items-center justify-between shadow-2xl backdrop-blur-md animate-fade-in">
+        <div className="fixed top-safe mt-2 inset-x-4 z-50 p-2.5 rounded-2xl bg-amber-950/90 border border-amber-500/50 text-amber-200 text-xs font-bold flex items-center justify-between shadow-2xl backdrop-blur-md animate-fade-in">
           <div className="flex items-center gap-2">
             <WifiOff className="w-4 h-4 text-amber-400 shrink-0" />
             <span>Sin conexión a internet. Leyendo en Modo Offline.</span>
@@ -64,7 +64,7 @@ export function NativeAppBridge() {
 
       {/* Banner de Conexión Restablecida */}
       {showReconnected && (
-        <div className="fixed top-2 inset-x-4 z-50 p-2.5 rounded-2xl bg-emerald-950/90 border border-emerald-500/50 text-emerald-200 text-xs font-bold flex items-center justify-between shadow-2xl backdrop-blur-md animate-fade-in">
+        <div className="fixed top-safe mt-2 inset-x-4 z-50 p-2.5 rounded-2xl bg-emerald-950/90 border border-emerald-500/50 text-emerald-200 text-xs font-bold flex items-center justify-between shadow-2xl backdrop-blur-md animate-fade-in">
           <div className="flex items-center gap-2">
             <Wifi className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>¡Conexión restablecida! Sincronizando datos...</span>

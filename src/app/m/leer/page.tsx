@@ -411,55 +411,57 @@ export function MobileReaderView({
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-transform duration-300 ${
           showControls ? "translate-y-0" : "-translate-y-full"
-        } bg-[#0b0f19]/95 backdrop-blur-xl border-b border-purple-500/20 px-4 h-14 flex items-center justify-between text-white shadow-xl`}
+        } bg-[#0b0f19]/95 backdrop-blur-xl border-b border-purple-500/20 pt-safe text-white shadow-xl`}
       >
-        <button
-          onClick={handleBack}
-          className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-95 transition-all"
-          aria-label="Volver"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-
-        {/* Título de la historia y selector de capítulo */}
-        <button
-          onClick={() => setShowChaptersDrawer(true)}
-          className="flex flex-col items-center max-w-[190px] px-2 py-0.5 rounded-lg active:scale-95 transition-all"
-        >
-          <span className="text-xs font-bold text-white truncate w-full text-center">
-            {storyTitle}
-          </span>
-          <span className="text-[10px] text-purple-300 font-semibold flex items-center gap-1">
-            <span>Capítulo {currentChapter} de {totalChapters}</span>
-            <span className="text-[8px]">▼</span>
-          </span>
-        </button>
-
-        {/* Botones de acción derecha: Narrador de voz + Ajustes */}
-        <div className="flex items-center gap-1.5">
+        <div className="px-4 h-14 flex items-center justify-between">
           <button
-            onClick={handleToggleTTS}
-            className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all active:scale-95 ${
-              isSpeaking
-                ? "bg-purple-600 border-purple-500 text-white animate-pulse"
-                : "bg-white/5 border-white/10 text-purple-300 hover:text-white"
-            }`}
-            title={isSpeaking ? (isSpeechPaused ? "Reanudar audio" : "Pausar audio") : "Escuchar con voz"}
+            onClick={handleBack}
+            className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white active:scale-95 transition-all"
+            aria-label="Volver"
           >
-            {isSpeaking ? (
-              isSpeechPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />
-            ) : (
-              <Volume2 className="w-4 h-4" />
-            )}
+            <ArrowLeft className="w-5 h-5" />
           </button>
 
+          {/* Título de la historia y selector de capítulo */}
           <button
-            onClick={() => setShowSettingsDrawer(!showSettingsDrawer)}
-            className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-purple-300 hover:text-white active:scale-95 transition-all"
-            title="Ajustes de lectura"
+            onClick={() => setShowChaptersDrawer(true)}
+            className="flex flex-col items-center max-w-[190px] px-2 py-0.5 rounded-lg active:scale-95 transition-all"
           >
-            <Sliders className="w-4 h-4" />
+            <span className="text-xs font-bold text-white truncate w-full text-center">
+              {storyTitle}
+            </span>
+            <span className="text-[10px] text-purple-300 font-semibold flex items-center gap-1">
+              <span>Capítulo {currentChapter} de {totalChapters}</span>
+              <span className="text-[8px]">▼</span>
+            </span>
           </button>
+
+          {/* Botones de acción derecha: Narrador de voz + Ajustes */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={handleToggleTTS}
+              className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all active:scale-95 ${
+                isSpeaking
+                  ? "bg-purple-600 border-purple-500 text-white animate-pulse"
+                  : "bg-white/5 border-white/10 text-purple-300 hover:text-white"
+              }`}
+              title={isSpeaking ? (isSpeechPaused ? "Reanudar audio" : "Pausar audio") : "Escuchar con voz"}
+            >
+              {isSpeaking ? (
+                isSpeechPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />
+              ) : (
+                <Volume2 className="w-4 h-4" />
+              )}
+            </button>
+
+            <button
+              onClick={() => setShowSettingsDrawer(!showSettingsDrawer)}
+              className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-purple-300 hover:text-white active:scale-95 transition-all"
+              title="Ajustes de lectura"
+            >
+              <Sliders className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </header>
 

@@ -12,13 +12,18 @@ export const isNativePlatform = Capacitor.isNativePlatform();
  * Inicializa todos los plugins y listeners nativos de Android
  */
 export async function initNativeBridge(onBackPressed?: () => boolean | void) {
+  if (typeof window !== "undefined" && isNativePlatform) {
+    // Configurar fallback de barra superior para dispositivos Android donde env(safe-area-inset-top) es 0
+    document.documentElement.style.setProperty("--safe-top-fallback", "24px");
+  }
+
   if (!isNativePlatform) return;
 
   try {
     // 1. Configurar barra de estado nativa
     await StatusBar.setStyle({ style: Style.Dark });
     await StatusBar.setBackgroundColor({ color: "#070a12" });
-    await StatusBar.setOverlaysWebView({ overlay: false });
+    await StatusBar.setOverlaysWebView({ overlay: true });
   } catch (err) {
     console.warn("StatusBar no disponible:", err);
   }

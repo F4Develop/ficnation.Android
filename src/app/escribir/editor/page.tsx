@@ -537,7 +537,8 @@ function MobileChapterEditorStudio() {
     <div className="flex flex-col min-h-screen w-full bg-[#070a12] text-slate-100 select-none pb-20">
       
       {/* ════════════ 1. CABECERA SUPERIOR MÓVIL DEL EDITOR ════════════ */}
-      <header className="sticky top-0 z-40 w-full bg-[#0b0f19]/95 backdrop-blur-xl border-b border-purple-500/15 px-3 h-13 flex items-center justify-between shadow-sm">
+      <header className="sticky top-0 z-40 w-full bg-[#0b0f19]/95 backdrop-blur-xl border-b border-purple-500/15 pt-safe shadow-sm">
+        <div className="px-3 h-13 flex items-center justify-between">
         
         {/* Izquierda: Volver al Taller + Título de Capítulo */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -682,7 +683,8 @@ function MobileChapterEditorStudio() {
             <span className="hidden sm:inline">Publicar</span>
           </button>
         </div>
-      </header>
+      </div>
+    </header>
 
       {/* Banner de Feedback / Estado */}
       {statusMessage && (
