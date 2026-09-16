@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modo Sin Conexión — FicNation</title>
+  <style>
+    :root {
+      --bg: #090611;
+      --card-bg: #120d24;
+      --border: #241a45;
+      --primary: #9333ea;
+      --primary-hover: #a855f7;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+    .icon-box {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, #7e22ce, #9333ea);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(147, 51, 234, 0.5);
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.025em;
+    }
+    h1 span {
+      color: #c084fc;
+    }
+    p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.25rem;
+      border-radius: 1rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(147, 51, 234, 0.4);
+    }
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #1c1438;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: #251b4a;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      margin-bottom: 1.25rem;
+    }
+    .dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background-color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-box">📖</div>
+    <div class="status-badge">
+      <span class="dot"></span>
+      Sin Conexión a Internet
+    </div>
+    <h1>Fic<span>Nation</span> Offline</h1>
+    <p>
+      No tienes acceso a internet en este momento. Si descargaste historias previamente, puedes seguir leyéndolas en tu biblioteca local.
+    </p>
+    <div class="actions">
+      <a href="/biblioteca" class="btn btn-primary">
+        Ir a Mi Biblioteca Guardada
+      </a>
+      <button onclick="window.location.reload()" class="btn btn-secondary">
+        Reintentar Conexión
+      </button>
+    </div>
+  </div>
+</body>
+</html>

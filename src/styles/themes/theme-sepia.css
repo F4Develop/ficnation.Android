@@ -1,0 +1,104 @@
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* TEMA SEPIA: PAPIRO IMPERIAL (PERGAMINO CÁLIDO & ÁMBAR DORADO / CERO MORADO) */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="sepia"],
+html.theme-sepia,
+html.sepia,
+html[data-theme="sepia"],
+body.theme-sepia,
+body.sepia,
+body[data-theme="sepia"],
+.theme-sepia,
+[data-theme="sepia"] {
+  /* Fondos y Superficies de Alto Contraste */
+  --bg-page: #f4ede2;
+  --bg-header: rgba(254, 252, 247, 0.98);
+  --bg-card: #fefcf7;
+  --bg-card-hover: #ffffff;
+  --bg-card-secondary: #eee4d3;
+  --bg-subtle: #fef3c7;
+  --bg-input: #eee4d3;
+  --bg-dropdown: #fefcf7;
+  --bg-badge: #fef3c7;
+  --bg-footer: #e5d8c3;
+
+  /* Bordes y Contornos Nítidos */
+  --border-primary: #d6c7b2;
+  --border-secondary: #bba78d;
+  --border-hover: #9c8468;
+  --border-input: #d6c7b2;
+
+  /* Textos de Alto Contraste */
+  --text-primary: #291e14;
+  --text-secondary: #4d3a27;
+  --text-muted: #7d654c;
+  --text-subtle: #a1866b;
+  --text-badge: #b45309;
+
+  /* Sombras y Elevación */
+  --card-shadow: 0 1px 3px 0 rgba(41, 30, 20, 0.08), 0 1px 2px -1px rgba(41, 30, 20, 0.08), 0 0 0 1px rgba(41, 30, 20, 0.04);
+  --card-shadow-hover: 0 4px 8px -1px rgba(41, 30, 20, 0.12), 0 2px 4px -2px rgba(41, 30, 20, 0.06);
+  --card-secondary-shadow: 0 1px 2px 0 rgba(41, 30, 20, 0.04);
+  --header-shadow: 0 1px 3px 0 rgba(41, 30, 20, 0.08), 0 1px 2px -1px rgba(41, 30, 20, 0.06);
+
+  /* Botón de Salir */
+  --logout-bg: #fff1f2;
+  --logout-border: #fecdd3;
+  --logout-text: #e11d48;
+  --logout-hover-bg: #ffe4e6;
+
+  /* Logo Oficial en Modo Sepia */
+  --logo-box-bg: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+  --logo-box-shadow: 0 4px 14px -2px rgba(217, 119, 6, 0.35);
+  --logo-text-accent: #d97706;
+  --logo-sparkle: #f59e0b;
+
+  /* Navbar Botones */
+  --nav-btn-explore-bg: #eee4d3;
+  --nav-btn-explore-border: #d6c7b2;
+  --nav-btn-explore-text: #4d3a27;
+  --nav-btn-explore-hover-bg: #e5d8c3;
+  --nav-btn-explore-icon: #d97706;
+
+  --nav-btn-write-bg: #fef3c7;
+  --nav-btn-write-border: #fcd34d;
+  --nav-btn-write-text: #92400e;
+  --nav-btn-write-icon: #d97706;
+
+  /* Hero Banner */
+  --hero-bg: linear-gradient(135deg, #fefcf7 0%, #f7f0e3 55%, #fef3c7 100%);
+  --hero-border: #d6c7b2;
+  --hero-title: #291e14;
+  --hero-subtitle: #4d3a27;
+  --hero-badge-bg: #fef3c7;
+  --hero-badge-border: #fcd34d;
+  --hero-badge-text: #92400e;
+  --hero-btn-primary-bg: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  --hero-btn-primary-text: #ffffff;
+  --hero-btn-secondary-bg: #eee4d3;
+  --hero-btn-secondary-border: #d6c7b2;
+  --hero-btn-secondary-text: #291e14;
+  --hero-dot-active: #d97706;
+  --hero-dot-inactive: #d6c7b2;
+
+  /* Continuar Leyendo */
+  --reading-hero-bg: #fefcf7;
+  --reading-hero-border: #d6c7b2;
+  --reading-hero-title: #291e14;
+  --reading-hero-synopsis: #4d3a27;
+  --reading-badge-bg: #fef3c7;
+  --reading-badge-text: #92400e;
+  --reading-badge-border: #fcd34d;
+  --reading-progress-track: #d6c7b2;
+  --reading-progress-fill: linear-gradient(to right, #d97706, #f59e0b);
+
+  /* Botones de Acción Globales */
+  --btn-cta-bg: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  --btn-cta-text: #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-track: #f4ede2;
+  --scrollbar-thumb: #c9bba6;
+  --scrollbar-thumb-hover: #a1866b;
+}

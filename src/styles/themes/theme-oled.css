@@ -1,0 +1,104 @@
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* TEMA CARBONO PURO: OLED DEEP BLACK (#000000) & CONTRASTE INFINITO          */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="oled"],
+html.theme-oled,
+html.oled,
+html[data-theme="oled"],
+body.theme-oled,
+body.oled,
+body[data-theme="oled"],
+.theme-oled,
+[data-theme="oled"] {
+  /* Fondos y Superficies OLED */
+  --bg-page: #000000;
+  --bg-header: rgba(0, 0, 0, 0.95);
+  --bg-card: #08080a;
+  --bg-card-hover: #121216;
+  --bg-card-secondary: #0d0d10;
+  --bg-subtle: rgba(255, 255, 255, 0.08);
+  --bg-input: #050507;
+  --bg-dropdown: #08080a;
+  --bg-badge: rgba(255, 255, 255, 0.12);
+  --bg-footer: #000000;
+
+  /* Bordes */
+  --border-primary: rgba(255, 255, 255, 0.15);
+  --border-secondary: rgba(255, 255, 255, 0.28);
+  --border-hover: rgba(255, 255, 255, 0.6);
+  --border-input: rgba(255, 255, 255, 0.2);
+
+  /* Textos de Alto Contraste */
+  --text-primary: #ffffff;
+  --text-secondary: #e4e4e7;
+  --text-muted: #a1a1aa;
+  --text-subtle: #71717a;
+  --text-badge: #f4f4f5;
+
+  /* Sombras y Elevación */
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --card-shadow-hover: 0 8px 30px -4px rgba(255, 255, 255, 0.15);
+  --card-secondary-shadow: none;
+  --header-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.9);
+
+  /* Botón de Salir */
+  --logout-bg: rgba(239, 68, 68, 0.18);
+  --logout-border: rgba(239, 68, 68, 0.35);
+  --logout-text: #fca5a5;
+  --logout-hover-bg: rgba(239, 68, 68, 0.3);
+
+  /* Logo Oficial en Modo OLED */
+  --logo-box-bg: linear-gradient(135deg, #27272a 0%, #52525b 100%);
+  --logo-box-shadow: 0 4px 15px -2px rgba(255, 255, 255, 0.15);
+  --logo-text-accent: #ffffff;
+  --logo-sparkle: #e4e4e7;
+
+  /* Navbar Botones */
+  --nav-btn-explore-bg: rgba(255, 255, 255, 0.08);
+  --nav-btn-explore-border: rgba(255, 255, 255, 0.22);
+  --nav-btn-explore-text: #ffffff;
+  --nav-btn-explore-hover-bg: rgba(255, 255, 255, 0.16);
+  --nav-btn-explore-icon: #e4e4e7;
+
+  --nav-btn-write-bg: linear-gradient(to right, rgba(39, 39, 42, 0.8), rgba(63, 63, 70, 0.8));
+  --nav-btn-write-border: rgba(255, 255, 255, 0.28);
+  --nav-btn-write-text: #ffffff;
+  --nav-btn-write-icon: #f4f4f5;
+
+  /* Hero Banner */
+  --hero-bg: linear-gradient(135deg, #0e0e12 0%, #18181b 50%, #000000 100%);
+  --hero-border: rgba(255, 255, 255, 0.22);
+  --hero-title: #ffffff;
+  --hero-subtitle: #d4d4d8;
+  --hero-badge-bg: rgba(255, 255, 255, 0.14);
+  --hero-badge-border: rgba(255, 255, 255, 0.3);
+  --hero-badge-text: #ffffff;
+  --hero-btn-primary-bg: linear-gradient(135deg, #f4f4f5 0%, #d4d4d8 100%);
+  --hero-btn-primary-text: #09090b;
+  --hero-btn-secondary-bg: rgba(24, 24, 27, 0.9);
+  --hero-btn-secondary-border: rgba(255, 255, 255, 0.25);
+  --hero-btn-secondary-text: #ffffff;
+  --hero-dot-active: #ffffff;
+  --hero-dot-inactive: rgba(255, 255, 255, 0.25);
+
+  /* Continuar Leyendo */
+  --reading-hero-bg: linear-gradient(135deg, #0d0d10 0%, #000000 100%);
+  --reading-hero-border: rgba(255, 255, 255, 0.2);
+  --reading-hero-title: #ffffff;
+  --reading-hero-synopsis: #d4d4d8;
+  --reading-badge-bg: rgba(255, 255, 255, 0.14);
+  --reading-badge-text: #ffffff;
+  --reading-badge-border: rgba(255, 255, 255, 0.3);
+  --reading-progress-track: rgba(255, 255, 255, 0.15);
+  --reading-progress-fill: linear-gradient(to right, #71717a, #a1a1aa, #ffffff);
+
+  /* Botones de Acción Globales */
+  --btn-cta-bg: linear-gradient(135deg, #ffffff 0%, #e4e4e7 100%);
+  --btn-cta-text: #09090b;
+
+  /* Scrollbar */
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #27272a;
+  --scrollbar-thumb-hover: #3f3f46;
+}

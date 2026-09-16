@@ -1,0 +1,104 @@
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* TEMA CARMESÍ: GOTHIC RUBY & BLOOD VAMPIRE                                   */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="crimson"],
+html.theme-crimson,
+html.crimson,
+html[data-theme="crimson"],
+body.theme-crimson,
+body.crimson,
+body[data-theme="crimson"],
+.theme-crimson,
+[data-theme="crimson"] {
+  /* Fondos y Superficies de Alto Contraste */
+  --bg-page: #0a0206;
+  --bg-header: rgba(10, 2, 6, 0.92);
+  --bg-card: #16050e;
+  --bg-card-hover: #220817;
+  --bg-card-secondary: #1a0612;
+  --bg-subtle: rgba(225, 29, 72, 0.14);
+  --bg-input: #11030b;
+  --bg-dropdown: #16050e;
+  --bg-badge: rgba(159, 18, 57, 0.35);
+  --bg-footer: #060104;
+
+  /* Bordes y Contornos Nítidos */
+  --border-primary: rgba(225, 29, 72, 0.28);
+  --border-secondary: rgba(244, 63, 94, 0.42);
+  --border-hover: rgba(251, 113, 133, 0.7);
+  --border-input: rgba(225, 29, 72, 0.35);
+
+  /* Textos */
+  --text-primary: #fff1f2;
+  --text-secondary: #fecdd3;
+  --text-muted: #fb7185;
+  --text-subtle: #e11d48;
+  --text-badge: #fda4af;
+
+  /* Sombras y Elevación */
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(225, 29, 72, 0.18);
+  --card-shadow-hover: 0 8px 30px -4px rgba(225, 29, 72, 0.3);
+  --card-secondary-shadow: none;
+  --header-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.7);
+
+  /* Botón de Salir */
+  --logout-bg: rgba(136, 19, 55, 0.35);
+  --logout-border: rgba(244, 63, 94, 0.45);
+  --logout-text: #fda4af;
+  --logout-hover-bg: rgba(136, 19, 55, 0.55);
+
+  /* Logo Oficial en Modo Carmesí */
+  --logo-box-bg: linear-gradient(135deg, #9f1239 0%, #e11d48 100%);
+  --logo-box-shadow: 0 4px 15px -2px rgba(225, 29, 72, 0.45);
+  --logo-text-accent: #fb7185;
+  --logo-sparkle: #fda4af;
+
+  /* Navbar Botones */
+  --nav-btn-explore-bg: rgba(225, 29, 72, 0.18);
+  --nav-btn-explore-border: rgba(244, 63, 94, 0.35);
+  --nav-btn-explore-text: #fff1f2;
+  --nav-btn-explore-hover-bg: rgba(225, 29, 72, 0.3);
+  --nav-btn-explore-icon: #fb7185;
+
+  --nav-btn-write-bg: linear-gradient(to right, rgba(159, 18, 57, 0.6), rgba(225, 29, 72, 0.6));
+  --nav-btn-write-border: rgba(244, 63, 94, 0.45);
+  --nav-btn-write-text: #fff1f2;
+  --nav-btn-write-icon: #fda4af;
+
+  /* Hero Banner */
+  --hero-bg: linear-gradient(135deg, #1c0512 0%, #29081a 50%, #0d0208 100%);
+  --hero-border: rgba(225, 29, 72, 0.35);
+  --hero-title: #ffffff;
+  --hero-subtitle: #ffe4e6;
+  --hero-badge-bg: rgba(159, 18, 57, 0.6);
+  --hero-badge-border: rgba(251, 113, 133, 0.4);
+  --hero-badge-text: #fda4af;
+  --hero-btn-primary-bg: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  --hero-btn-primary-text: #ffffff;
+  --hero-btn-secondary-bg: rgba(26, 6, 18, 0.85);
+  --hero-btn-secondary-border: rgba(225, 29, 72, 0.35);
+  --hero-btn-secondary-text: #fff1f2;
+  --hero-dot-active: #fb7185;
+  --hero-dot-inactive: rgba(225, 29, 72, 0.3);
+
+  /* Continuar Leyendo */
+  --reading-hero-bg: linear-gradient(135deg, #1c0613 0%, #10030b 100%);
+  --reading-hero-border: rgba(225, 29, 72, 0.3);
+  --reading-hero-title: #ffffff;
+  --reading-hero-synopsis: #fecdd3;
+  --reading-badge-bg: rgba(159, 18, 57, 0.7);
+  --reading-badge-text: #fda4af;
+  --reading-badge-border: rgba(251, 113, 133, 0.4);
+  --reading-progress-track: rgba(159, 18, 57, 0.3);
+  --reading-progress-fill: linear-gradient(to right, #9f1239, #e11d48, #fb7185);
+
+  /* Botones de Acción Globales */
+  --btn-cta-bg: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+  --btn-cta-text: #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-track: #0a0206;
+  --scrollbar-thumb: #881337;
+  --scrollbar-thumb-hover: #9f1239;
+}

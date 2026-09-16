@@ -1,0 +1,42 @@
+{
+  "name": "FicNation — Historias, Fanfics y Universos Sin Límite",
+  "short_name": "FicNation",
+  "description": "Plataforma interactiva para leer, escribir y compartir novelas, fanfics e historias cósmicas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070a12",
+  "theme_color": "#070a12",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["books", "entertainment", "social", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Explorar Historias",
+      "url": "/explorar",
+      "description": "Descubre las mejores novelas y fanfics de la comunidad"
+    },
+    {
+      "name": "Estudio de Escritura",
+      "url": "/escribir",
+      "description": "Escribe o continúa tus capítulos en el estudio interactivo"
+    },
+    {
+      "name": "Biblioteca",
+      "url": "/biblioteca",
+      "description": "Accede a tus lecturas guardadas y listas"
+    }
+  ]
+}

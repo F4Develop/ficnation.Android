@@ -1,0 +1,1022 @@
+@import "tailwindcss";
+@import "../styles/themes/theme-dark.css";
+@import "../styles/themes/theme-light.css";
+@import "../styles/themes/theme-sepia.css";
+@import "../styles/themes/theme-neon.css";
+@import "../styles/themes/theme-crimson.css";
+@import "../styles/themes/theme-oled.css";
+
+:root {
+  --background: var(--bg-page);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-background: var(--bg-page);
+  --color-foreground: var(--text-primary);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Custom scrollbar dinámico */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* COMPONENTES SEMÁNTICOS ADAPTABLES AL TEMA ACTIVO                           */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.fic-header {
+  background-color: var(--bg-header) !important;
+  border-color: var(--border-primary) !important;
+  box-shadow: var(--header-shadow) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.fic-footer {
+  background-color: var(--bg-footer) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-secondary) !important;
+}
+
+.fic-hero {
+  background: var(--hero-bg) !important;
+  border-color: var(--hero-border) !important;
+}
+
+.fic-hero-title {
+  color: var(--hero-title) !important;
+}
+
+.fic-hero-subtitle {
+  color: var(--hero-subtitle) !important;
+}
+
+.fic-hero-badge {
+  background-color: var(--hero-badge-bg) !important;
+  border-color: var(--hero-badge-border) !important;
+  color: var(--hero-badge-text) !important;
+}
+
+.fic-btn-primary {
+  background: var(--hero-btn-primary-bg) !important;
+  color: var(--hero-btn-primary-text) !important;
+}
+
+.fic-btn-secondary {
+  background-color: var(--hero-btn-secondary-bg) !important;
+  border-color: var(--hero-btn-secondary-border) !important;
+  color: var(--hero-btn-secondary-text) !important;
+}
+
+.fic-card {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+.fic-card:hover {
+  border-color: var(--border-hover) !important;
+}
+
+.fic-card-secondary {
+  background-color: var(--bg-card-secondary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--card-secondary-shadow, none) !important;
+}
+
+.fic-card-secondary:hover {
+  background-color: var(--bg-card-hover) !important;
+  border-color: var(--border-hover) !important;
+}
+
+.fic-input {
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-input) !important;
+  color: var(--text-primary) !important;
+}
+
+.fic-badge {
+  background-color: var(--bg-badge) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-badge) !important;
+}
+
+/* Clean, Flat & Minimalist Utilities */
+.glow-purple {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.glow-purple-sm {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.glow-purple-lg {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel {
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-primary) !important;
+}
+
+.glass-card {
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-primary) !important;
+}
+
+.ambient-glow {
+  display: none !important;
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes heroEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bodyEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-entrance {
+  animation: heroEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-body-entrance {
+  animation: bodyEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* ══════════════════════════════════════════════════════════ */
+/* EFECTO DE LECTURA: APARICIÓN SUAVE AL HACER SCROLL (FADE)  */
+/* ══════════════════════════════════════════════════════════ */
+.scroll-fade-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-fade-item.fade-revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-fade-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════ */
+/* MODO OPTIMIZADO PARA PC DE BAJOS RECURSOS (LOW-SPEC MODE)  */
+/* ══════════════════════════════════════════════════════════ */
+html.low-spec-mode .ambient-glow,
+body.low-spec-mode .ambient-glow {
+  display: none !important;
+}
+
+html.low-spec-mode *,
+body.low-spec-mode * {
+  /* Desactivar filtros de desenfoque pesados para la GPU */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  text-shadow: none !important;
+}
+
+html.low-spec-mode .glass-panel,
+html.low-spec-mode .glass-card,
+body.low-spec-mode .glass-panel,
+body.low-spec-mode .glass-card {
+  background: var(--bg-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.low-spec-mode [class*="backdrop-blur"],
+body.low-spec-mode [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Reducir o pausar animaciones continuas costosas */
+html.low-spec-mode .animate-pulse,
+html.low-spec-mode .animate-ping,
+html.low-spec-mode .animate-float,
+html.low-spec-mode .animate-pulse-glow,
+html.low-spec-mode .animate-shimmer,
+body.low-spec-mode .animate-pulse,
+body.low-spec-mode .animate-ping,
+body.low-spec-mode .animate-float,
+body.low-spec-mode .animate-pulse-glow,
+body.low-spec-mode .animate-shimmer {
+  animation: none !important;
+}
+
+/* Transiciones instantáneas ultra-ligeras */
+html.low-spec-mode .transition-all,
+html.low-spec-mode .transition-colors,
+html.low-spec-mode .transition-transform,
+body.low-spec-mode .transition-all,
+body.low-spec-mode .transition-colors,
+body.low-spec-mode .transition-transform {
+  transition-duration: 0.05s !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* WYSIWYG Editor & Chapter Reader Typography and Image Elements               */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+[contenteditable]:focus {
+  outline: none;
+}
+
+[contenteditable] h1,
+.chapter-rendered-html h1 {
+  font-size: 1.6em;
+  font-weight: 800;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  line-height: 1.3;
+}
+
+[contenteditable] h2,
+.chapter-rendered-html h2 {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.35;
+}
+
+[contenteditable] blockquote,
+.chapter-rendered-html blockquote {
+  border-left: 3px solid rgba(168, 85, 247, 0.6);
+  padding-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+[contenteditable] img,
+.chapter-rendered-html img {
+  max-width: 100%;
+  border-radius: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+[contenteditable] p,
+.chapter-rendered-html p {
+  margin-bottom: 0.85em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* MOTOR DE TEMAS NATIVOS GLOBALES                                             */
+/* Los temas activos (Oscuro y Claro) se cargan modularmente desde:            */
+/* - src/styles/themes/theme-dark.css                                          */
+/* - src/styles/themes/theme-light.css                                         */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+
+
+/* ══════════════════════════════════════════════════════════ */
+/* EFECTOS Y ANIMACIONES DE TEXTO PARA HISTORIAS (FIC FX)    */
+/* ══════════════════════════════════════════════════════════ */
+
+/* 1. Mágicos y Brillos */
+@keyframes ficGlowPurple {
+  0%, 100% {
+    text-shadow: 0 0 4px rgba(192, 132, 252, 0.5);
+    color: #f3e8ff;
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(192, 132, 252, 0.8);
+    color: #ffffff;
+  }
+}
+
+.fic-fx-glow-purple {
+  display: inline-block;
+  font-weight: 700;
+  animation: ficGlowPurple 2.4s ease-in-out infinite;
+}
+
+@keyframes ficGlowGold {
+  0%, 100% {
+    text-shadow: 0 0 4px rgba(251, 191, 36, 0.5);
+    color: #fef3c7;
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+    color: #ffffff;
+  }
+}
+
+.fic-fx-glow-gold {
+  display: inline-block;
+  font-weight: 700;
+  animation: ficGlowGold 2.2s ease-in-out infinite;
+}
+
+@keyframes ficGlowCyan {
+  0%, 100% {
+    text-shadow: 0 0 4px rgba(34, 211, 238, 0.5);
+    color: #ecfeff;
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+    color: #ffffff;
+  }
+}
+
+.fic-fx-glow-cyan {
+  display: inline-block;
+  font-weight: 700;
+  animation: ficGlowCyan 2s ease-in-out infinite;
+}
+
+@keyframes ficGlowCrimson {
+  0%, 100% {
+    text-shadow: 0 0 4px rgba(244, 63, 94, 0.5);
+    color: #ffe4e6;
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(225, 29, 72, 0.8);
+    color: #ffffff;
+  }
+}
+
+.fic-fx-glow-crimson {
+  display: inline-block;
+  font-weight: 700;
+  animation: ficGlowCrimson 1.8s ease-in-out infinite;
+}
+
+@keyframes ficFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.fic-fx-float {
+  display: inline-block;
+  animation: ficFloat 3s ease-in-out infinite;
+  color: #c4b5fd;
+}
+
+@keyframes ficRainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.fic-fx-rainbow {
+  display: inline-block;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6, #06b6d4, #10b981, #f59e0b, #ec4899);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ficRainbow 4s ease infinite;
+  font-weight: 800;
+}
+
+@keyframes ficFlame {
+  0%, 100% {
+    color: #fb923c;
+    text-shadow: 0 -2px 6px #ea580c, 0 -6px 14px #c2410c;
+    transform: skewX(-1deg) scaleY(1);
+  }
+  50% {
+    color: #fef08a;
+    text-shadow: 0 -4px 10px #f97316, 0 -10px 20px #dc2626;
+    transform: skewX(1.5deg) scaleY(1.04);
+  }
+}
+
+.fic-fx-flame {
+  display: inline-block;
+  animation: ficFlame 1.4s ease-in-out infinite;
+  font-weight: 700;
+}
+
+@keyframes ficGhost {
+  0%, 100% {
+    opacity: 0.85;
+    filter: blur(0px);
+    color: #e0e7ff;
+  }
+  50% {
+    opacity: 0.35;
+    filter: blur(1.2px);
+    color: #a5b4fc;
+    letter-spacing: 0.05em;
+  }
+}
+
+.fic-fx-ghost {
+  display: inline-block;
+  animation: ficGhost 3.5s ease-in-out infinite;
+}
+
+@keyframes ficSparkle {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px #fef08a);
+    opacity: 0.9;
+  }
+  50% {
+    filter: drop-shadow(0 0 8px #fde047) drop-shadow(0 0 16px #f59e0b);
+    opacity: 1;
+    color: #fef9c3;
+  }
+}
+
+.fic-fx-sparkle {
+  display: inline-block;
+  animation: ficSparkle 2s ease-in-out infinite;
+  font-weight: 700;
+}
+
+/* 2. Tensión y Terror */
+@keyframes ficGlitch {
+  0% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+  20% {
+    transform: translate(-2px, 1px);
+    text-shadow: 2px 0 #06b6d4, -2px 0 #ef4444;
+  }
+  40% {
+    transform: translate(1px, -1px);
+    text-shadow: -2px 0 #06b6d4, 2px 0 #ef4444;
+  }
+  60% {
+    transform: translate(-1px, 2px);
+    text-shadow: 1px 0 #06b6d4, -1px 0 #ef4444;
+  }
+  80% {
+    transform: translate(2px, -1px);
+    text-shadow: -1px 0 #06b6d4, 1px 0 #ef4444;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+}
+
+.fic-fx-glitch {
+  display: inline-block;
+  animation: ficGlitch 1.2s steps(2, start) infinite;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+@keyframes ficShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-1.5px, 1.5px) rotate(-0.5deg); }
+  40% { transform: translate(1.5px, -1.5px) rotate(0.5deg); }
+  60% { transform: translate(-1.5px, -1px) rotate(0deg); }
+  80% { transform: translate(1px, 1.5px) rotate(-0.5deg); }
+}
+
+.fic-fx-shake {
+  display: inline-block;
+  animation: ficShake 0.25s linear infinite;
+  font-weight: 700;
+}
+
+@keyframes ficHeartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.12); color: #f43f5e; text-shadow: 0 0 10px rgba(244, 63, 94, 0.8); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.08); color: #fb7185; text-shadow: 0 0 6px rgba(251, 113, 133, 0.6); }
+  70% { transform: scale(1); }
+}
+
+.fic-fx-heartbeat {
+  display: inline-block;
+  animation: ficHeartbeat 1.6s ease-in-out infinite;
+  font-weight: 700;
+}
+
+@keyframes ficFlicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 0.99;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.15;
+    text-shadow: none;
+  }
+}
+
+.fic-fx-flicker {
+  display: inline-block;
+  animation: ficFlicker 3s linear infinite;
+}
+
+@keyframes ficDrip {
+  0%, 100% {
+    text-shadow: 0 2px 4px rgba(159, 18, 57, 0.6), 0 5px 8px rgba(136, 19, 55, 0.4);
+    color: #f43f5e;
+  }
+  50% {
+    text-shadow: 0 4px 8px rgba(159, 18, 57, 0.9), 0 10px 14px rgba(136, 19, 55, 0.7);
+    color: #e11d48;
+  }
+}
+
+.fic-fx-drip {
+  display: inline-block;
+  animation: ficDrip 2s ease-in-out infinite;
+  font-weight: 800;
+}
+
+/* 3. Narrativa, Diálogos y Misterio */
+.fic-fx-spoiler {
+  display: inline-block;
+  background-color: #1e1136;
+  color: transparent !important;
+  text-shadow: none !important;
+  border-radius: 4px;
+  padding: 0 4px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  transition: all 0.25s ease;
+}
+
+.fic-fx-spoiler:hover,
+.fic-fx-spoiler:active,
+.fic-fx-spoiler.revealed {
+  background-color: rgba(147, 51, 234, 0.18);
+  color: inherit !important;
+  user-select: text;
+  border-color: rgba(168, 85, 247, 0.8);
+}
+
+@keyframes ficWave {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-3px); }
+  75% { transform: translateY(3px); }
+}
+
+.fic-fx-wave {
+  display: inline-block;
+  animation: ficWave 2s ease-in-out infinite;
+  font-style: italic;
+  color: #a78bfa;
+}
+
+@keyframes ficBreathe {
+  0%, 100% { transform: scale(1); letter-spacing: normal; }
+  50% { transform: scale(1.03); letter-spacing: 0.03em; color: #e9d5ff; }
+}
+
+.fic-fx-breathe {
+  display: inline-block;
+  animation: ficBreathe 4s ease-in-out infinite;
+}
+
+@keyframes ficBlur {
+  0%, 100% { filter: blur(0px); opacity: 1; }
+  50% { filter: blur(2px); opacity: 0.5; }
+}
+
+.fic-fx-blur {
+  display: inline-block;
+  animation: ficBlur 3s ease-in-out infinite;
+}
+
+@keyframes ficSlam {
+  0%, 100% { transform: scale(1); }
+  10% { transform: scale(1.25); color: #facc15; }
+  20% { transform: scale(0.95); }
+  30% { transform: scale(1.05); }
+  40% { transform: scale(1); }
+}
+
+.fic-fx-slam {
+  display: inline-block;
+  animation: ficSlam 3s ease infinite;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+@keyframes bounceGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 2.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ADAPTACIÓN DE EFECTOS FIC FX PARA TEMAS CLAROS (BLANCO & SEPIA)             */
+/* Garantiza legibilidad absoluta y contraste en fondos claros sin perder FX    */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes ficGlowCyanLight {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(6, 182, 212, 0.45);
+    color: #0e7490;
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(6, 182, 212, 0.8), 0 0 2px rgba(8, 145, 178, 0.95);
+    color: #0284c7;
+  }
+}
+
+@keyframes ficGlowPurpleLight {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(168, 85, 247, 0.45);
+    color: #6b21a8;
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.8), 0 0 2px rgba(126, 34, 206, 0.95);
+    color: #9333ea;
+  }
+}
+
+@keyframes ficGlowGoldLight {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(245, 158, 11, 0.45);
+    color: #9a3412;
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(245, 158, 11, 0.8), 0 0 2px rgba(180, 83, 9, 0.95);
+    color: #c2410c;
+  }
+}
+
+@keyframes ficGlowCrimsonLight {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(244, 63, 94, 0.45);
+    color: #9f1239;
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(225, 29, 72, 0.8), 0 0 2px rgba(190, 18, 60, 0.95);
+    color: #e11d48;
+  }
+}
+
+@keyframes ficGhostLight {
+  0%, 100% {
+    opacity: 0.95;
+    filter: blur(0px);
+    color: #3730a3;
+  }
+  50% {
+    opacity: 0.45;
+    filter: blur(1.2px);
+    color: #4f46e5;
+    letter-spacing: 0.05em;
+  }
+}
+
+@keyframes ficFlameLight {
+  0%, 100% {
+    color: #c2410c;
+    text-shadow: 0 -2px 6px rgba(234, 88, 12, 0.6), 0 -4px 10px rgba(194, 65, 12, 0.4);
+    transform: skewX(-1deg) scaleY(1);
+  }
+  50% {
+    color: #ea580c;
+    text-shadow: 0 -3px 8px rgba(249, 115, 22, 0.75), 0 -8px 16px rgba(220, 38, 38, 0.5);
+    transform: skewX(1.5deg) scaleY(1.04);
+  }
+}
+
+@keyframes ficSparkleLight {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(202, 138, 4, 0.6));
+    opacity: 0.95;
+    color: #854d0e;
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)) drop-shadow(0 0 14px rgba(245, 158, 11, 0.6));
+    opacity: 1;
+    color: #b45309;
+  }
+}
+
+@keyframes ficBreatheLight {
+  0%, 100% { transform: scale(1); letter-spacing: normal; color: #581c87; }
+  50% { transform: scale(1.03); letter-spacing: 0.03em; color: #7e22ce; }
+}
+
+@keyframes ficSlamLight {
+  0%, 100% { transform: scale(1); color: #78350f; }
+  10% { transform: scale(1.25); color: #b45309; }
+  20% { transform: scale(0.95); }
+  30% { transform: scale(1.05); }
+  40% { transform: scale(1); }
+}
+
+/* Reglas adaptativas para fondos claros (Blanco y Sepia en el lector o Tema Claro global) */
+[data-reader-theme="light"] .fic-fx-glow-cyan,
+[data-reader-theme="sepia"] .fic-fx-glow-cyan,
+html.theme-light .fic-fx-glow-cyan,
+html.light .fic-fx-glow-cyan,
+body.theme-light .fic-fx-glow-cyan,
+body.light .fic-fx-glow-cyan,
+:root[data-theme="light"] .fic-fx-glow-cyan {
+  animation-name: ficGlowCyanLight;
+  color: #0e7490;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-glow-purple,
+[data-reader-theme="sepia"] .fic-fx-glow-purple,
+html.theme-light .fic-fx-glow-purple,
+html.light .fic-fx-glow-purple,
+body.theme-light .fic-fx-glow-purple,
+body.light .fic-fx-glow-purple,
+:root[data-theme="light"] .fic-fx-glow-purple {
+  animation-name: ficGlowPurpleLight;
+  color: #6b21a8;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-glow-gold,
+[data-reader-theme="sepia"] .fic-fx-glow-gold,
+html.theme-light .fic-fx-glow-gold,
+html.light .fic-fx-glow-gold,
+body.theme-light .fic-fx-glow-gold,
+body.light .fic-fx-glow-gold,
+:root[data-theme="light"] .fic-fx-glow-gold {
+  animation-name: ficGlowGoldLight;
+  color: #9a3412;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-glow-crimson,
+[data-reader-theme="sepia"] .fic-fx-glow-crimson,
+html.theme-light .fic-fx-glow-crimson,
+html.light .fic-fx-glow-crimson,
+body.theme-light .fic-fx-glow-crimson,
+body.light .fic-fx-glow-crimson,
+:root[data-theme="light"] .fic-fx-glow-crimson {
+  animation-name: ficGlowCrimsonLight;
+  color: #9f1239;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-float,
+[data-reader-theme="sepia"] .fic-fx-float,
+html.theme-light .fic-fx-float,
+html.light .fic-fx-float,
+body.theme-light .fic-fx-float,
+body.light .fic-fx-float,
+:root[data-theme="light"] .fic-fx-float {
+  color: #6b21a8;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-ghost,
+[data-reader-theme="sepia"] .fic-fx-ghost,
+html.theme-light .fic-fx-ghost,
+html.light .fic-fx-ghost,
+body.theme-light .fic-fx-ghost,
+body.light .fic-fx-ghost,
+:root[data-theme="light"] .fic-fx-ghost {
+  animation-name: ficGhostLight;
+  color: #3730a3;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-flame,
+[data-reader-theme="sepia"] .fic-fx-flame,
+html.theme-light .fic-fx-flame,
+html.light .fic-fx-flame,
+body.theme-light .fic-fx-flame,
+body.light .fic-fx-flame,
+:root[data-theme="light"] .fic-fx-flame {
+  animation-name: ficFlameLight;
+  color: #c2410c;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-sparkle,
+[data-reader-theme="sepia"] .fic-fx-sparkle,
+html.theme-light .fic-fx-sparkle,
+html.light .fic-fx-sparkle,
+body.theme-light .fic-fx-sparkle,
+body.light .fic-fx-sparkle,
+:root[data-theme="light"] .fic-fx-sparkle {
+  animation-name: ficSparkleLight;
+  color: #854d0e;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-glitch,
+[data-reader-theme="sepia"] .fic-fx-glitch,
+html.theme-light .fic-fx-glitch,
+html.light .fic-fx-glitch,
+body.theme-light .fic-fx-glitch,
+body.light .fic-fx-glitch,
+:root[data-theme="light"] .fic-fx-glitch {
+  color: #0f172a;
+}
+
+[data-reader-theme="light"] .fic-fx-wave,
+[data-reader-theme="sepia"] .fic-fx-wave,
+html.theme-light .fic-fx-wave,
+html.light .fic-fx-wave,
+body.theme-light .fic-fx-wave,
+body.light .fic-fx-wave,
+:root[data-theme="light"] .fic-fx-wave {
+  color: #6d28d9;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-breathe,
+[data-reader-theme="sepia"] .fic-fx-breathe,
+html.theme-light .fic-fx-breathe,
+html.light .fic-fx-breathe,
+body.theme-light .fic-fx-breathe,
+body.light .fic-fx-breathe,
+:root[data-theme="light"] .fic-fx-breathe {
+  animation-name: ficBreatheLight;
+  color: #581c87;
+  font-weight: 700;
+}
+
+[data-reader-theme="light"] .fic-fx-slam,
+[data-reader-theme="sepia"] .fic-fx-slam,
+html.theme-light .fic-fx-slam,
+html.light .fic-fx-slam,
+body.theme-light .fic-fx-slam,
+body.light .fic-fx-slam,
+:root[data-theme="light"] .fic-fx-slam {
+  animation-name: ficSlamLight;
+  color: #78350f;
+}
+
+[data-reader-theme="light"] .fic-fx-spoiler,
+[data-reader-theme="sepia"] .fic-fx-spoiler,
+html.theme-light .fic-fx-spoiler,
+html.light .fic-fx-spoiler,
+body.theme-light .fic-fx-spoiler,
+body.light .fic-fx-spoiler,
+:root[data-theme="light"] .fic-fx-spoiler {
+  background-color: #1e1b4b;
+  border-color: rgba(107, 33, 168, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ESTILOS Y ZONAS SEGURAS PARA APP MÓVIL DEDICADA                             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+html, body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+
+/* Ocultar barra de desplazamiento en feeds de carrusel móvil */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

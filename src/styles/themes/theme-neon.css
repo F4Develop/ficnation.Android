@@ -1,0 +1,104 @@
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* TEMA NEÓN: CIBERPUNK SYNTHWAVE (AZUL ABISAL, CIAN LÁSER & ESMERALDA NEÓN)  */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="neon"],
+html.theme-neon,
+html.neon,
+html[data-theme="neon"],
+body.theme-neon,
+body.neon,
+body[data-theme="neon"],
+.theme-neon,
+[data-theme="neon"] {
+  /* Fondos y Superficies de Alto Contraste */
+  --bg-page: #020914;
+  --bg-header: rgba(2, 9, 20, 0.92);
+  --bg-card: #08152b;
+  --bg-card-hover: #0d203f;
+  --bg-card-secondary: #0c1d38;
+  --bg-subtle: rgba(6, 182, 212, 0.12);
+  --bg-input: #061124;
+  --bg-dropdown: #08152b;
+  --bg-badge: rgba(6, 182, 212, 0.2);
+  --bg-footer: #01050c;
+
+  /* Bordes y Contornos Nítidos */
+  --border-primary: rgba(6, 182, 212, 0.28);
+  --border-secondary: rgba(6, 182, 212, 0.45);
+  --border-hover: rgba(34, 211, 238, 0.7);
+  --border-input: rgba(6, 182, 212, 0.35);
+
+  /* Textos de Alto Contraste */
+  --text-primary: #f0fdf4;
+  --text-secondary: #a5f3fc;
+  --text-muted: #38bdf8;
+  --text-subtle: #0284c7;
+  --text-badge: #22d3ee;
+
+  /* Sombras y Elevación */
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(6, 182, 212, 0.18);
+  --card-shadow-hover: 0 8px 25px -2px rgba(6, 182, 212, 0.25);
+  --card-secondary-shadow: none;
+  --header-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.7);
+
+  /* Botón de Salir */
+  --logout-bg: rgba(136, 19, 55, 0.3);
+  --logout-border: rgba(244, 63, 94, 0.4);
+  --logout-text: #fda4af;
+  --logout-hover-bg: rgba(136, 19, 55, 0.5);
+
+  /* Logo Oficial en Modo Neón */
+  --logo-box-bg: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  --logo-box-shadow: 0 4px 15px -2px rgba(6, 182, 212, 0.45);
+  --logo-text-accent: #22d3ee;
+  --logo-sparkle: #34d399;
+
+  /* Navbar Botones */
+  --nav-btn-explore-bg: rgba(6, 182, 212, 0.15);
+  --nav-btn-explore-border: rgba(6, 182, 212, 0.35);
+  --nav-btn-explore-text: #f0fdf4;
+  --nav-btn-explore-hover-bg: rgba(6, 182, 212, 0.28);
+  --nav-btn-explore-icon: #22d3ee;
+
+  --nav-btn-write-bg: linear-gradient(to right, rgba(6, 182, 212, 0.25), rgba(16, 185, 129, 0.25));
+  --nav-btn-write-border: rgba(6, 182, 212, 0.45);
+  --nav-btn-write-text: #f0fdf4;
+  --nav-btn-write-icon: #34d399;
+
+  /* Hero Banner */
+  --hero-bg: linear-gradient(135deg, #071730 0%, #0e2b52 50%, #030b18 100%);
+  --hero-border: rgba(6, 182, 212, 0.35);
+  --hero-title: #ffffff;
+  --hero-subtitle: #bae6fd;
+  --hero-badge-bg: rgba(6, 182, 212, 0.25);
+  --hero-badge-border: rgba(34, 211, 238, 0.5);
+  --hero-badge-text: #67e8f9;
+  --hero-btn-primary-bg: linear-gradient(135deg, #0284c7 0%, #06b6d4 50%, #10b981 100%);
+  --hero-btn-primary-text: #ffffff;
+  --hero-btn-secondary-bg: rgba(8, 27, 51, 0.8);
+  --hero-btn-secondary-border: rgba(6, 182, 212, 0.35);
+  --hero-btn-secondary-text: #f0fdf4;
+  --hero-dot-active: #22d3ee;
+  --hero-dot-inactive: rgba(6, 182, 212, 0.3);
+
+  /* Continuar Leyendo */
+  --reading-hero-bg: linear-gradient(135deg, #091a36 0%, #061124 100%);
+  --reading-hero-border: rgba(6, 182, 212, 0.3);
+  --reading-hero-title: #ffffff;
+  --reading-hero-synopsis: #a5f3fc;
+  --reading-badge-bg: rgba(6, 182, 212, 0.25);
+  --reading-badge-text: #67e8f9;
+  --reading-badge-border: rgba(34, 211, 238, 0.5);
+  --reading-progress-track: rgba(6, 182, 212, 0.2);
+  --reading-progress-fill: linear-gradient(to right, #0284c7, #06b6d4, #10b981);
+
+  /* Botones de Acción Globales */
+  --btn-cta-bg: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  --btn-cta-text: #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-track: #020914;
+  --scrollbar-thumb: #0369a1;
+  --scrollbar-thumb-hover: #0284c7;
+}

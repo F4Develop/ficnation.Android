@@ -1,0 +1,54 @@
+name: 📱 Compilar APK Android en la Nube
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Permite compilar manualmente con 1 clic desde GitHub
+
+jobs:
+  build-apk:
+    name: ⚡ Generar APK Debug
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: ☕ Configurar Java 21 (JDK para Android Gradle)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: 🤖 Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 📦 Instalar dependencias npm
+        run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
+      - name: 🏗️ Compilar Next.js (Export estático)
+        run: npm run build
+
+      - name: 🔄 Sincronizar Capacitor con Android
+        run: npx cap sync android
+
+      - name: 🔨 Compilar APK con Gradle en la nube
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: 🚀 Subir APK generado como descarga (Artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: FicNation-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14

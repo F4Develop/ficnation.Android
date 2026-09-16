@@ -1,0 +1,105 @@
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* TEMA OSCURO: NOCHE CÓSMICA (FICNATION ORIGINAL PREDETERMINADO)             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+:root,
+:root[data-theme="dark"],
+html[data-theme="dark"],
+html.dark,
+html.theme-dark,
+body[data-theme="dark"],
+body.dark,
+body.theme-dark,
+.theme-dark,
+[data-theme="dark"] {
+  /* Fondos y Superficies */
+  --bg-page: #080511;
+  --bg-header: rgba(8, 5, 17, 0.88);
+  --bg-card: #0f0822;
+  --bg-card-hover: #160d32;
+  --bg-card-secondary: #130a2a;
+  --bg-subtle: rgba(147, 51, 234, 0.12);
+  --bg-input: #120a26;
+  --bg-dropdown: #0f0822;
+  --bg-badge: rgba(88, 28, 135, 0.7);
+  --bg-footer: #05020c;
+
+  /* Bordes */
+  --border-primary: rgba(147, 51, 234, 0.22);
+  --border-secondary: rgba(168, 85, 247, 0.35);
+  --border-hover: rgba(192, 132, 252, 0.6);
+  --border-input: rgba(147, 51, 234, 0.3);
+
+  /* Textos */
+  --text-primary: #ffffff;
+  --text-secondary: #d8b4fe;
+  --text-muted: #a855f7;
+  --text-subtle: #7e22ce;
+  --text-badge: #f0abfc;
+
+  /* Sombras y Elevación */
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(147, 51, 234, 0.15);
+  --card-shadow-hover: 0 8px 30px -4px rgba(147, 51, 234, 0.25);
+  --card-secondary-shadow: none;
+  --header-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.6);
+
+  /* Botón de Salir */
+  --logout-bg: rgba(136, 19, 55, 0.25);
+  --logout-border: rgba(244, 63, 94, 0.3);
+  --logout-text: #fda4af;
+  --logout-hover-bg: rgba(136, 19, 55, 0.45);
+
+  /* Logo Oficial */
+  --logo-box-bg: linear-gradient(135deg, #7e22ce 0%, #d946ef 100%);
+  --logo-box-shadow: 0 4px 15px -2px rgba(168, 85, 247, 0.4);
+  --logo-text-accent: #e879f9;
+  --logo-sparkle: #f472b6;
+
+  /* Navbar Botones */
+  --nav-btn-explore-bg: rgba(88, 28, 135, 0.3);
+  --nav-btn-explore-border: rgba(168, 85, 247, 0.35);
+  --nav-btn-explore-text: #f3e8ff;
+  --nav-btn-explore-hover-bg: rgba(88, 28, 135, 0.55);
+  --nav-btn-explore-icon: #c084fc;
+
+  --nav-btn-write-bg: linear-gradient(to right, rgba(88, 28, 135, 0.7), rgba(112, 26, 117, 0.7));
+  --nav-btn-write-border: rgba(168, 85, 247, 0.4);
+  --nav-btn-write-text: #f3e8ff;
+  --nav-btn-write-icon: #f472b6;
+
+  /* Hero Banner */
+  --hero-bg: linear-gradient(135deg, #130a2a 0%, #1c0f38 50%, #0d061c 100%);
+  --hero-border: rgba(168, 85, 247, 0.25);
+  --hero-title: #ffffff;
+  --hero-subtitle: #e9d5ff;
+  --hero-badge-bg: rgba(88, 28, 135, 0.8);
+  --hero-badge-border: rgba(192, 132, 252, 0.4);
+  --hero-badge-text: #f0abfc;
+  --hero-btn-primary-bg: linear-gradient(to right, #9333ea, #d946ef);
+  --hero-btn-primary-text: #ffffff;
+  --hero-btn-secondary-bg: rgba(88, 28, 135, 0.6);
+  --hero-btn-secondary-border: rgba(168, 85, 247, 0.3);
+  --hero-btn-secondary-text: #f3e8ff;
+  --hero-dot-active: #e879f9;
+  --hero-dot-inactive: rgba(168, 85, 247, 0.3);
+
+  /* Continuar Leyendo */
+  --reading-hero-bg: linear-gradient(135deg, #150a2e 0%, #0f0720 100%);
+  --reading-hero-border: rgba(168, 85, 247, 0.25);
+  --reading-hero-title: #ffffff;
+  --reading-hero-synopsis: #d8b4fe;
+  --reading-badge-bg: rgba(88, 28, 135, 0.85);
+  --reading-badge-text: #f0abfc;
+  --reading-badge-border: rgba(192, 132, 252, 0.35);
+  --reading-progress-track: rgba(88, 28, 135, 0.4);
+  --reading-progress-fill: linear-gradient(to right, #9333ea, #d946ef);
+
+  /* Botones de Acción Globales */
+  --btn-cta-bg: linear-gradient(135deg, #9333ea 0%, #d946ef 100%);
+  --btn-cta-text: #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-track: #080511;
+  --scrollbar-thumb: #4c1d95;
+  --scrollbar-thumb-hover: #6b21a8;
+}
