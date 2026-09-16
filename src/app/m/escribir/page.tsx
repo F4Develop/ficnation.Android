@@ -765,7 +765,7 @@ export function MobileWriterView({
   });
 
   return (
-    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-24 select-none">
+    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-10 select-none">
       
       {/* Inputs ocultos para subida de portada */}
       <input ref={createCoverInputRef} type="file" accept="image/*,.gif" className="hidden" onChange={(e) => handleCoverUpload(e, "create")} />
@@ -775,8 +775,14 @@ export function MobileWriterView({
       {!hideHeader && (
         <MobileHeader
           title={viewMode === "gestion_historia" ? (selectedStory?.title || "Gestión") : "Taller de Historias"}
-          showBack={viewMode === "gestion_historia"}
-          onBack={() => setViewMode("mis_historias")}
+          showBack={true}
+          onBack={() => {
+            if (viewMode === "gestion_historia") {
+              setViewMode("mis_historias");
+            } else {
+              window.history.back();
+            }
+          }}
           rightAction={
             viewMode === "mis_historias" ? (
               <button
@@ -1612,9 +1618,6 @@ export function MobileWriterView({
           }}
         />
       )}
-
-      {/* ════════════ 3. NAVEGACIÓN INFERIOR MÓVIL ════════════ */}
-      {!hideNav && <MobileBottomNav activeTab="write" onSelectTab={onSelectTab} />}
     </div>
   );
 }

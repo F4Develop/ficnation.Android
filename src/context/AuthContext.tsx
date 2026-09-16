@@ -248,7 +248,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           name: data.name || authUser?.user_metadata?.name || "Usuario",
           username: data.username || authUser?.user_metadata?.username || "usuario",
           email: data.email || authUser?.email || "",
-          avatar: data.avatar_url || authUser?.user_metadata?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+          avatar: data.avatar_url || authUser?.user_metadata?.avatar_url || "/default-avatar.svg",
           bannerUrl: data.banner_url || "from-purple-950 via-indigo-950 to-[#080511]",
           bio: data.bio || "Nuevo miembro en FicNation.",
           level: levelData.level,
@@ -339,7 +339,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (amount <= 0) return;
     setUser((prev) => {
       if (!prev) return null;
-      const newCoins = (prev.coins ?? 100) + amount;
+      const newCoins = (prev.coins ?? 0) + amount;
       const updated: UserProfile = {
         ...prev,
         coins: newCoins,
@@ -669,7 +669,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               id: t.id,
               senderId: t.sender_id,
               senderName: t.profiles?.name || "Lector Anónimo",
-              senderAvatar: t.profiles?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
+              senderAvatar: t.profiles?.avatar_url || "/default-avatar.svg",
               recipientId: t.recipient_id,
               amount: t.amount,
               usdEquivalent: t.amount / 100,

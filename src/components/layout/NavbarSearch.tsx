@@ -245,7 +245,7 @@ export function NavbarSearch({ isMobile = false, onSelectResult }: NavbarSearchP
               id: p.id,
               name: p.name || "Usuario",
               username: uName,
-              avatar: p.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
+              avatar: p.avatar_url || "/default-avatar.svg",
               isVerified: isUserVerified(uName) || isUserVerified(p.id),
               isCreator: checkIsAdmin({ username: uName, name: p.name }),
             };
@@ -267,7 +267,7 @@ export function NavbarSearch({ isMobile = false, onSelectResult }: NavbarSearchP
               id: cachedProfile.id || "local",
               name: cachedProfile.name || "Tú",
               username: cachedProfile.username,
-              avatar: cachedProfile.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
+              avatar: cachedProfile.avatar || "/default-avatar.svg",
               isVerified: isUserVerified(cachedProfile.username),
               isCreator: checkIsAdmin(cachedProfile),
             });

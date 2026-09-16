@@ -144,7 +144,7 @@ function LegacyDesktopBibliotecaPage() {
               author: {
                 name: author?.name || "Autor",
                 username: author?.username || "autor",
-                avatar: author?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                avatar: author?.avatar_url || "/default-avatar.svg",
               },
               coverImage: story?.cover_url,
               genre: story?.genre || "Fantasía",

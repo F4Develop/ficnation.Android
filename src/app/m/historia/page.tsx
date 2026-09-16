@@ -18,10 +18,24 @@ import {
   Clock,
   Sparkles,
   Layers,
+  Download,
+  HardDriveDownload,
+  Trash2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import { type Story } from "@/data/mockStories";
 import { MobileReaderView } from "../leer/page";
+import {
+  hasUserVotedStory,
+  toggleStoryVote,
+  recordUniqueStoryView,
+} from "@/lib/storyInteractions";
+import {
+  downloadStoryForOffline,
+  isStoryDownloadedOffline,
+  removeOfflineStory,
+} from "@/lib/offlineStorage";
 
 export interface MobileStoryDetailProps {
   storyId?: string;
@@ -36,6 +50,7 @@ export function MobileStoryDetailView({
 }: MobileStoryDetailProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useAuth();
   const storyId = propStoryId || searchParams?.get("id") || "";
 
   const [story, setStory] = useState<Story | null>(null);
@@ -44,8 +59,45 @@ export function MobileStoryDetailView({
   const [isSaved, setIsSaved] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
   const [votesCount, setVotesCount] = useState(0);
+  const [readsCount, setReadsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [readingChapter, setReadingChapter] = useState<number | null>(null);
+
+  // Estado Offline
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadPercent, setDownloadPercent] = useState(0);
+  const [downloadStatusText, setDownloadStatusText] = useState("");
+
+  // Comprobar si ya está descargada
+  useEffect(() => {
+    if (storyId) {
+      setIsDownloaded(isStoryDownloadedOffline(storyId));
+    }
+  }, [storyId]);
+
+  const handleDownloadStory = async () => {
+    if (isDownloading || !storyId) return;
+    setIsDownloading(true);
+    setDownloadPercent(10);
+    setDownloadStatusText("Iniciando descarga...");
+
+    const res = await downloadStoryForOffline(storyId, (pct, status) => {
+      setDownloadPercent(pct);
+      setDownloadStatusText(status);
+    });
+
+    setIsDownloading(false);
+    if (res.success) {
+      setIsDownloaded(true);
+    }
+  };
+
+  const handleRemoveDownload = () => {
+    if (!storyId) return;
+    removeOfflineStory(storyId);
+    setIsDownloaded(false);
+  };
 
   useEffect(() => {
     if (!storyId) {
@@ -82,6 +134,9 @@ export function MobileStoryDetailView({
 
         if (!storyErr && storyData) {
           const profile = storyData.profiles as any;
+          const rawVotes = Number(storyData.votes_count ?? 0);
+          const rawReads = Math.max(Number(storyData.reads_count ?? 0), rawVotes);
+
           setStory({
             id: storyData.id,
             title: storyData.title,
@@ -96,12 +151,18 @@ export function MobileStoryDetailView({
             genre: storyData.genre || "Fantasía",
             tags: Array.isArray(storyData.tags) ? storyData.tags : [],
             chapters: 1,
-            reads: String(storyData.reads_count ?? 0),
-            votes: String(storyData.votes_count ?? 0),
+            reads: String(rawReads),
+            votes: String(rawVotes),
             completed: storyData.is_completed || false,
           });
-          setVotesCount(Number(storyData.votes_count ?? 0));
+          setVotesCount(rawVotes);
+          setReadsCount(rawReads);
         }
+
+        // Cargar estado de voto real
+        hasUserVotedStory(storyId, user?.id).then((voted) => {
+          setHasVoted(voted);
+        });
 
         // Cargar lista de capítulos reales desde la base de datos
         const { data: chData } = await supabase
@@ -136,46 +197,100 @@ export function MobileStoryDetailView({
 
     fetchStoryDetails();
 
-    // 3. Revisar si el usuario ya la tiene guardada en su biblioteca local
-    try {
-      const library = JSON.parse(localStorage.getItem("ficnation_library") || "[]");
-      setIsSaved(library.some((item: any) => item.id === storyId));
-      const votes = JSON.parse(localStorage.getItem("ficnation_votes") || "[]");
-      setHasVoted(votes.includes(storyId));
-    } catch {}
+    // 3. Revisar si el usuario ya la tiene guardada en su biblioteca
+    if (user?.id) {
+      const supabase = createClient();
+      supabase
+        .from("library_entries")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("story_id", storyId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) setIsSaved(true);
+        });
+    } else {
+      try {
+        const library = JSON.parse(localStorage.getItem("ficnation_library") || "[]");
+        setIsSaved(library.some((item: any) => item.id === storyId || item.storyId === storyId));
+      } catch {}
+    }
+  }, [storyId, user?.id]);
+
+  // Escuchar eventos globales en tiempo real
+  useEffect(() => {
+    const handleVoted = (e: any) => {
+      if (e.detail?.storyId === storyId) {
+        if (e.detail.newCount !== undefined) {
+          setVotesCount(Number(e.detail.newCount));
+          setStory((prev) => (prev ? { ...prev, votes: String(e.detail.newCount) } : prev));
+        }
+        if (e.detail.hasVoted !== undefined) {
+          setHasVoted(Boolean(e.detail.hasVoted));
+        }
+      }
+    };
+    const handleViewed = (e: any) => {
+      if (e.detail?.storyId === storyId && e.detail.readsCount !== undefined) {
+        setReadsCount(Number(e.detail.readsCount));
+        setStory((prev) => (prev ? { ...prev, reads: String(e.detail.readsCount) } : prev));
+      }
+    };
+
+    window.addEventListener("ficnation_story_voted", handleVoted);
+    window.addEventListener("ficnation_story_viewed", handleViewed);
+    return () => {
+      window.removeEventListener("ficnation_story_voted", handleVoted);
+      window.removeEventListener("ficnation_story_viewed", handleViewed);
+    };
   }, [storyId]);
 
-  const handleToggleSave = () => {
+  const handleToggleSave = async () => {
     if (!story) return;
+    const nextSaved = !isSaved;
+    setIsSaved(nextSaved);
+
     try {
       const library = JSON.parse(localStorage.getItem("ficnation_library") || "[]");
       let nextLibrary;
-      if (isSaved) {
-        nextLibrary = library.filter((item: any) => item.id !== story.id);
-        setIsSaved(false);
+      if (!nextSaved) {
+        nextLibrary = library.filter((item: any) => item.id !== story.id && item.storyId !== story.id);
       } else {
-        nextLibrary = [...library, story];
-        setIsSaved(true);
+        nextLibrary = [...library, { ...story, storyId: story.id }];
       }
       localStorage.setItem("ficnation_library", JSON.stringify(nextLibrary));
+
+      if (user?.id) {
+        const supabase = createClient();
+        if (nextSaved) {
+          await supabase.from("library_entries").upsert({
+            user_id: user.id,
+            story_id: story.id,
+            current_chapter: 1,
+            progress_percent: 0,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "user_id,story_id" });
+        } else {
+          await supabase.from("library_entries").delete().eq("user_id", user.id).eq("story_id", story.id);
+        }
+      }
     } catch {}
   };
 
-  const handleToggleVote = () => {
+  const handleToggleVote = async () => {
     if (!story) return;
-    try {
-      const votes = JSON.parse(localStorage.getItem("ficnation_votes") || "[]");
-      if (hasVoted) {
-        localStorage.setItem("ficnation_votes", JSON.stringify(votes.filter((id: string) => id !== story.id)));
-        setHasVoted(false);
-        setVotesCount((v) => Math.max(v - 1, 0));
-      } else {
-        votes.push(story.id);
-        localStorage.setItem("ficnation_votes", JSON.stringify(votes));
-        setHasVoted(true);
-        setVotesCount((v) => v + 1);
-      }
-    } catch {}
+    const targetAuthorId = (story.author as any)?.id || (story as any).author_id;
+    const { hasVoted: nextVoted, newCount } = await toggleStoryVote({
+      storyId: story.id,
+      user: user ? { id: user.id, name: user.name, avatar: user.avatar } : null,
+      storyTitle: story.title,
+      authorId: targetAuthorId,
+      currentCount: votesCount,
+    });
+
+    setHasVoted(nextVoted);
+    setVotesCount(newCount);
+    setStory((prev) => (prev ? { ...prev, votes: String(newCount) } : prev));
   };
 
   const handleShare = () => {
@@ -247,7 +362,7 @@ export function MobileStoryDetailView({
   }
 
   return (
-    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-20 select-none">
+    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-20 select-none animate-screen-enter">
       {/* ════════════ 1. TOP BAR DE NAVEGACIÓN ════════════ */}
       <div className="sticky top-0 z-40 bg-[#070a12]/80 backdrop-blur-xl px-4 h-14 flex items-center justify-between border-b border-white/5">
         <button
@@ -320,7 +435,7 @@ export function MobileStoryDetailView({
           </div>
 
           {/* Botones de acción principales */}
-          <div className="flex items-center gap-2 mt-5">
+          <div className="flex items-center gap-2.5 pt-4">
             <button
               onClick={() => handleRead(1)}
               className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-black shadow-lg shadow-purple-600/30 active:scale-95 transition-all"
@@ -352,6 +467,68 @@ export function MobileStoryDetailView({
             >
               <Heart className={`w-5 h-5 ${hasVoted ? "fill-pink-500 text-pink-500" : ""}`} />
             </button>
+          </div>
+
+          {/* Tarjeta de Descarga Offline */}
+          <div className="mt-3 p-3.5 rounded-2xl bg-gradient-to-br from-purple-950/40 via-indigo-950/20 to-[#070a12] border border-purple-500/20 flex items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                isDownloaded
+                  ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+                  : "bg-purple-600/20 border-purple-500/40 text-purple-400"
+              }`}>
+                <HardDriveDownload className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-white truncate">
+                  {isDownloaded ? "Disponible sin conexión (Offline)" : "Lectura Offline"}
+                </p>
+                <p className="text-[10px] text-slate-400 truncate">
+                  {isDownloaded
+                    ? "Todos los capítulos guardados"
+                    : isDownloading
+                    ? downloadStatusText
+                    : "Descarga la obra para leer sin internet"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              {isDownloaded ? (
+                <>
+                  <span className="text-[11px] font-extrabold text-emerald-400 px-2.5 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>Listo</span>
+                  </span>
+                  <button
+                    onClick={handleRemoveDownload}
+                    className="p-1.5 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-white/10 transition-colors"
+                    title="Eliminar descarga"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleDownloadStory}
+                  disabled={isDownloading}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-1 ${
+                    isDownloading
+                      ? "bg-purple-600 text-white animate-download-pulse"
+                      : "bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-600/30"
+                  }`}
+                >
+                  {isDownloading ? (
+                    <span>{downloadPercent}%</span>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Descargar</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
         </section>
 

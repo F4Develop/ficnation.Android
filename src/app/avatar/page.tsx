@@ -71,8 +71,8 @@ import {
 
 // Presets de avatar
 export const AVATAR_PRESETS = [
+  "/default-avatar.svg",
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=200&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
@@ -180,7 +180,7 @@ const DEFAULTS = {
   name: "Alexander Raven",
   username: "alex_raven",
   bio: "Escritor aficionado de fantasía oscura y ciencia ficción. Amante de los mundos inmersivos y las historias complejas.",
-  avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
+  avatar: "/default-avatar.svg",
   banner: "from-purple-950 via-indigo-950 to-[#080511]",
   level: 1,
   levelTitle: "Iniciado",

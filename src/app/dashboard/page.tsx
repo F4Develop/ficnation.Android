@@ -15,11 +15,16 @@ import {
   Compass,
   ArrowRight,
   TrendingUp,
+  Clock,
+  Award,
+  Bell,
+  Radio,
+  ChevronLeft,
 } from "lucide-react";
 import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
 import { MobileStoryCard } from "@/components/mobile/MobileStoryCard";
-import { useAuth, calculateReaderLevel } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { type Story } from "@/data/mockStories";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -49,6 +54,54 @@ interface CommunityAuthor {
   isVerified: boolean;
 }
 
+interface AnnouncementBanner {
+  id: string;
+  badge: string;
+  badgeColor: string;
+  title: string;
+  description: string;
+  ctaText: string;
+  ctaHref: string;
+  icon: string;
+  gradientBg: string;
+}
+
+const DASHBOARD_ANNOUNCEMENTS: AnnouncementBanner[] = [
+  {
+    id: "banner-1",
+    badge: "ACTUALIZACIÓN V2.0",
+    badgeColor: "from-purple-500 to-indigo-500",
+    title: "¡FicNation Android Oficial!",
+    description: "Modo de lectura offline, nuevo editor con tipografías y efectos de texto inmersivos.",
+    ctaText: "Explorar Novedades",
+    ctaHref: "/explorar",
+    icon: "🚀",
+    gradientBg: "from-purple-950/80 via-indigo-950/60 to-[#070a12]",
+  },
+  {
+    id: "banner-2",
+    badge: "EVENTO DE AUTORES",
+    badgeColor: "from-amber-500 to-orange-500",
+    title: "Torneo de Fanfics & Obras",
+    description: "Escribe tu nuevo capítulo esta semana y compite por premios de hasta 5,000 monedas.",
+    ctaText: "Escribir Ahora",
+    ctaHref: "/escribir",
+    icon: "🏆",
+    gradientBg: "from-amber-950/70 via-purple-950/50 to-[#070a12]",
+  },
+  {
+    id: "banner-3",
+    badge: "COMUNIDAD & CLUB",
+    badgeColor: "from-emerald-500 to-teal-500",
+    title: "Historias Originales Cada Día",
+    description: "Descubre universos creados por autores hispanos y apoya con votos y comentarios.",
+    ctaText: "Ver Biblioteca",
+    ctaHref: "/biblioteca",
+    icon: "✨",
+    gradientBg: "from-emerald-950/60 via-slate-950/60 to-[#070a12]",
+  },
+];
+
 export default function MobileDashboardPage() {
   const { user } = useAuth();
   const [selectedGenre, setSelectedGenre] = useState("Todos");
@@ -56,30 +109,26 @@ export default function MobileDashboardPage() {
   const [authors, setAuthors] = useState<CommunityAuthor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [continueReadingList, setContinueReadingList] = useState<ReadingProgressEntry[]>([]);
-  const [streakData, setStreakData] = useState<ReadingStreakData>({
-    streak: 0,
-    todayChaptersCount: 0,
-    dailyGoal: 3,
-    lastReadDate: "",
-  });
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
-  const userName = user?.name || user?.username || "Lector";
-  const userXp = user?.xp ?? 0;
-  const userCoins = user?.coins ?? 0;
-  const levelInfo = calculateReaderLevel(userXp);
-
-  // 1. Cargar Racha y Continuar Leyendo desde el almacenamiento local
+  // 1. Cargar Continuar Leyendo desde el almacenamiento local
   useEffect(() => {
     try {
-      const streak = getReadingStreak();
-      setStreakData(streak);
       getContinueReadingStories(user?.id).then((inProgress) => {
         setContinueReadingList(inProgress);
       });
     } catch {}
   }, [user?.id]);
 
-  // 2. Cargar Historias y Autores directamente desde Supabase
+  // 2. Temporizador para el carrusel de anuncios y noticias
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBannerIndex((prev) => (prev + 1) % DASHBOARD_ANNOUNCEMENTS.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 3. Cargar Historias y Autores directamente desde Supabase
   useEffect(() => {
     async function loadDatabaseData() {
       setIsLoading(true);
@@ -116,8 +165,6 @@ export default function MobileDashboardPage() {
         if (!storiesError && dbStories) {
           const mapped: Story[] = dbStories
             .filter((s: any) => {
-              // REGLA: Las historias que no tienen capítulos deben considerarse borradores
-              // y NO mostrarse en el dashboard ni en explorar.
               const publishedChapters = Array.isArray(s.chapters)
                 ? s.chapters.filter((c: any) => c.is_published !== false)
                 : [];
@@ -182,7 +229,16 @@ export default function MobileDashboardPage() {
   }, []);
 
   const featuredStory = stories.length > 0 ? stories[0] : null;
-  const popularStories = stories.length > 1 ? stories.slice(1, 8) : stories;
+  // Tendencias ordenadas por votos / popularidad
+  const popularStories = useMemo(() => {
+    return [...stories].sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0)).slice(0, 10);
+  }, [stories]);
+
+  // Novedades recién publicadas
+  const recentStories = useMemo(() => {
+    return stories.slice(0, 10);
+  }, [stories]);
+
   const activeContinue = continueReadingList[0] || null;
 
   const filteredStories = useMemo(() => {
@@ -194,73 +250,64 @@ export default function MobileDashboardPage() {
     );
   }, [stories, selectedGenre]);
 
+  const activeBanner = DASHBOARD_ANNOUNCEMENTS[currentBannerIndex];
+
   return (
     <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-24 select-none">
       {/* ════════════ 1. CABECERA MÓVIL SUPERIOR ════════════ */}
       <MobileHeader />
 
-      <main className="flex-1 space-y-6 pt-3">
+      <main className="flex-1 space-y-6 pt-2">
         
-        {/* ════════════ 2. PANEL PERSONALIZADO DEL LECTOR (HUD) ════════════ */}
+        {/* ════════════ 2. BANNER DE NOTICIAS, NOVEDADES Y ACTUALIZACIONES ════════════ */}
         <section className="px-4">
-          <div className="p-4 rounded-3xl bg-gradient-to-br from-purple-950/40 via-indigo-950/20 to-purple-900/10 border border-purple-500/20 shadow-xl space-y-3.5">
-            {/* Saludo con Avatar */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl overflow-hidden bg-gradient-to-tr from-purple-600 to-indigo-500 p-0.5 shadow-md shrink-0">
-                  <div className="w-full h-full rounded-[14px] overflow-hidden bg-[#070a12] flex items-center justify-center">
-                    <img
-                      src={user?.avatar || "/logo.jpg"}
-                      alt={userName}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+          <div className={`relative overflow-hidden rounded-3xl p-4 bg-gradient-to-br ${activeBanner.gradientBg} border border-purple-500/25 shadow-xl transition-all duration-500`}>
+            {/* Destellos de fondo */}
+            <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 rounded-full bg-purple-500/15 blur-2xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 -ml-6 -mb-6 w-32 h-32 rounded-full bg-indigo-500/15 blur-2xl pointer-events-none" />
+
+            <div className="relative z-10 flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wide text-white bg-gradient-to-r ${activeBanner.badgeColor} shadow-xs`}>
+                    {activeBanner.badge}
+                  </span>
+                  <span className="text-xs">{activeBanner.icon}</span>
                 </div>
-                <div>
-                  <h2 className="text-base font-black text-white flex items-center gap-1.5">
-                    <span>¡Hola, {userName}!</span>
-                    <span className="text-sm">👋</span>
-                  </h2>
-                  <p className="text-[11px] text-purple-300 font-semibold">
-                    {levelInfo.icon} Nivel {levelInfo.level} • {levelInfo.levelTitle}
-                  </p>
-                </div>
+
+                <h2 className="text-sm sm:text-base font-black text-white leading-snug truncate">
+                  {activeBanner.title}
+                </h2>
+
+                <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                  {activeBanner.description}
+                </p>
               </div>
 
-              {/* Botón rápido a perfil */}
+              {/* Botón de Acción del Banner */}
               <Link
-                href="/perfil"
-                className="px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-[11px] font-bold text-slate-300 active:scale-95 transition-all"
+                href={activeBanner.ctaHref}
+                className="shrink-0 self-center px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-95 border border-white/20 text-white text-xs font-bold flex items-center gap-1 shadow-md backdrop-blur-md transition-all"
               >
-                Mi Perfil
+                <span>{activeBanner.ctaText}</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
-            {/* Métricas rápidas: Racha, Meta y Monedas */}
-            <div className="grid grid-cols-3 gap-2 pt-1 border-t border-white/10">
-              <div className="p-2 rounded-2xl bg-white/5 border border-white/10 text-center">
-                <p className="text-[10px] text-slate-400 font-medium">Racha</p>
-                <p className="text-xs font-black text-amber-400 flex items-center justify-center gap-1 mt-0.5">
-                  <Flame className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span>{streakData.streak} días</span>
-                </p>
-              </div>
-
-              <div className="p-2 rounded-2xl bg-white/5 border border-white/10 text-center">
-                <p className="text-[10px] text-slate-400 font-medium">Meta Hoy</p>
-                <p className="text-xs font-black text-purple-300 flex items-center justify-center gap-1 mt-0.5">
-                  <Zap className="w-3.5 h-3.5 text-purple-400" />
-                  <span>{streakData.todayChaptersCount}/{streakData.dailyGoal} caps</span>
-                </p>
-              </div>
-
-              <div className="p-2 rounded-2xl bg-white/5 border border-white/10 text-center">
-                <p className="text-[10px] text-slate-400 font-medium">Monedas</p>
-                <p className="text-xs font-black text-amber-300 flex items-center justify-center gap-1 mt-0.5">
-                  <span>🪙</span>
-                  <span>{userCoins.toLocaleString()}</span>
-                </p>
-              </div>
+            {/* Paginación con Puntos Interactivos */}
+            <div className="flex items-center justify-center gap-1.5 pt-3 mt-2 border-t border-white/10">
+              {DASHBOARD_ANNOUNCEMENTS.map((b, idx) => (
+                <button
+                  key={b.id}
+                  onClick={() => setCurrentBannerIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentBannerIndex
+                      ? "w-6 bg-gradient-to-r from-purple-400 to-indigo-400"
+                      : "w-1.5 bg-white/20 hover:bg-white/40"
+                  }`}
+                  aria-label={`Ver noticia ${idx + 1}`}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -269,7 +316,7 @@ export default function MobileDashboardPage() {
         {isLoading && (
           <section className="px-4 py-8 text-center space-y-3">
             <div className="w-10 h-10 border-3 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-purple-300 font-bold">Conectando con la base de datos...</p>
+            <p className="text-xs text-purple-300 font-bold">Cargando mundos e historias...</p>
           </section>
         )}
 
@@ -394,27 +441,30 @@ export default function MobileDashboardPage() {
           </section>
         )}
 
-        {/* ════════════ 5. CARROUSEL: MÁS POPULARES DE FICNATION ════════════ */}
+        {/* ════════════ 5. CARRUSEL: TOP TENDENCIAS & MÁS POPULARES (CON RANKINGS) ════════════ */}
         {!isLoading && popularStories.length > 0 && (
           <section className="space-y-3">
             <div className="flex items-center justify-between px-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Flame className="w-4 h-4 text-orange-400" />
-                <span>Populares de la Semana</span>
-              </h3>
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                  <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
+                  <span>Top Tendencias</span>
+                </h3>
+                <p className="text-[10px] text-slate-400">Las historias más votadas y leídas</p>
+              </div>
               <Link
                 href="/explorar"
-                className="text-xs text-purple-400 font-semibold flex items-center gap-0.5 active:scale-95"
+                className="text-xs text-purple-400 font-bold flex items-center gap-0.5 active:scale-95"
               >
-                <span>Ver más</span>
+                <span>Ver todo</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
-            <div className="flex gap-3 overflow-x-auto px-4 pb-2 no-scrollbar snap-x snap-mandatory">
-              {popularStories.map((story) => (
+            <div className="flex gap-3.5 overflow-x-auto px-4 pb-2 no-scrollbar snap-x snap-mandatory">
+              {popularStories.map((story, idx) => (
                 <div key={story.id} className="snap-start">
-                  <MobileStoryCard story={story} variant="portrait" />
+                  <MobileStoryCard story={story} variant="portrait" rank={idx + 1} />
                 </div>
               ))}
             </div>
@@ -424,6 +474,12 @@ export default function MobileDashboardPage() {
         {/* ════════════ 6. SELECTOR DE GÉNEROS RÁPIDOS ════════════ */}
         {!isLoading && stories.length > 0 && (
           <section className="space-y-2">
+            <div className="flex items-center justify-between px-4">
+              <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5 text-purple-400" />
+                <span>Explorar por Género</span>
+              </h3>
+            </div>
             <div className="flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar">
               {GENRES.map((genre) => {
                 const isSelected = selectedGenre === genre;
@@ -445,14 +501,40 @@ export default function MobileDashboardPage() {
           </section>
         )}
 
-        {/* ════════════ 7. COMUNIDAD & AUTORES DESTACADOS (De Supabase) ════════════ */}
+        {/* ════════════ 7. CARRUSEL: RECIÉN PUBLICADAS Y ACTUALIZADAS ════════════ */}
+        {!isLoading && recentStories.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between px-4">
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-purple-400" />
+                  <span>Recién Salidas del Horno</span>
+                </h3>
+                <p className="text-[10px] text-slate-400">Nuevos capítulos y lanzamientos</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3.5 overflow-x-auto px-4 pb-2 no-scrollbar snap-x snap-mandatory">
+              {recentStories.map((story) => (
+                <div key={story.id} className="snap-start">
+                  <MobileStoryCard story={story} variant="portrait" />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ════════════ 8. COMUNIDAD & AUTORES DESTACADOS (De Supabase) ════════════ */}
         {!isLoading && authors.length > 0 && (
           <section className="px-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-purple-400" />
-                <span>Autores de la Comunidad</span>
-              </h3>
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-purple-400" />
+                  <span>Autores de la Comunidad</span>
+                </h3>
+                <p className="text-[10px] text-slate-400">Creadores destacados en FicNation</p>
+              </div>
             </div>
 
             <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
@@ -477,17 +559,17 @@ export default function MobileDashboardPage() {
           </section>
         )}
 
-        {/* ════════════ 8. FEED VERTICAL: RECOMENDADAS & NOVEDADES ════════════ */}
+        {/* ════════════ 9. FEED VERTICAL: RECOMENDADAS & NOVEDADES ════════════ */}
         {!isLoading && filteredStories.length > 0 && (
           <section className="px-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-purple-400" />
+              <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                <Compass className="w-4 h-4 text-purple-400" />
                 <span>
-                  {selectedGenre === "Todos" ? "Nuevas Obras en la Base de Datos" : `Historias de ${selectedGenre}`}
+                  {selectedGenre === "Todos" ? "Descubre Más Historias" : `Obras de ${selectedGenre}`}
                 </span>
               </h3>
-              <span className="text-[11px] text-slate-400">{filteredStories.length} obras</span>
+              <span className="text-[11px] text-slate-400 font-bold">{filteredStories.length} obras</span>
             </div>
 
             <div className="space-y-3">
@@ -500,9 +582,8 @@ export default function MobileDashboardPage() {
 
       </main>
 
-      {/* ════════════ 9. BARRA DE NAVEGACIÓN INFERIOR MÓVIL ════════════ */}
+      {/* ════════════ 10. BARRA DE NAVEGACIÓN INFERIOR MÓVIL ════════════ */}
       <MobileBottomNav activeTab="home" />
     </div>
   );
 }
-

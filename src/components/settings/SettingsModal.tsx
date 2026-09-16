@@ -118,7 +118,7 @@ export function SettingsModal() {
   if (!isSettingsOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-2xl animate-fade-in">
       
       {/* Contenedor del Modal */}
       <div

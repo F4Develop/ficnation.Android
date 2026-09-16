@@ -170,7 +170,7 @@ export function FollowListModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-xl animate-fade-in-scale">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in-scale">
       <div
         className="w-full max-w-lg rounded-3xl border fic-card shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] my-auto"
         style={{

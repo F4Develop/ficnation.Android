@@ -107,7 +107,7 @@ export default function StoryDetailPage() {
     author: {
       name: "Autor",
       username: "autor",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      avatar: "/default-avatar.svg",
     },
   });
 
@@ -191,7 +191,7 @@ export default function StoryDetailPage() {
             author: {
               name: author?.name || "Autor",
               username: author?.username || "autor",
-              avatar: author?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+              avatar: author?.avatar_url || "/default-avatar.svg",
             },
           });
 
@@ -290,7 +290,7 @@ export default function StoryDetailPage() {
                   author: {
                     name: localProfile.name || "Autor",
                     username: localProfile.username || "autor",
-                    avatar: localProfile.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                    avatar: localProfile.avatar || "/default-avatar.svg",
                   },
                 });
               }
@@ -347,7 +347,7 @@ export default function StoryDetailPage() {
               id: r.id,
               author: r.profiles?.name || "Lector",
               username: r.profiles?.username || "lector",
-              avatar: r.profiles?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+              avatar: r.profiles?.avatar_url || "/default-avatar.svg",
               rating: r.rating || 5,
               date: new Date(r.created_at).toLocaleDateString("es-ES"),
               comment: r.content,
@@ -512,7 +512,7 @@ export default function StoryDetailPage() {
       id: `r-${Date.now()}`,
       author: user?.name || "Lector",
       username: user?.username || "lector",
-      avatar: user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      avatar: user?.avatar || "/default-avatar.svg",
       rating: reviewRating,
       date: "Ahora mismo",
       comment: reviewText.trim(),

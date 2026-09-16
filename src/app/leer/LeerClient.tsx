@@ -285,7 +285,7 @@ export default function ChapterReaderPage() {
         let loadedCover = "";
         let loadedAuthorId = "";
         let loadedAuthorName = "Autor";
-        let loadedAuthorAvatar = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80";
+        let loadedAuthorAvatar = "/default-avatar.svg";
         let loadedTotalChapters = 1;
         let loadedChapterTitle = `Capítulo ${chapterNumber}`;
         let loadedChapterContent = "";
@@ -559,7 +559,7 @@ export default function ChapterReaderPage() {
             dbComments.map((c: any) => ({
               id: c.id,
               author: c.profiles?.name || "Lector",
-              avatar: c.profiles?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+              avatar: c.profiles?.avatar_url || "/default-avatar.svg",
               text: c.content,
               time: new Date(c.created_at).toLocaleDateString("es-ES"),
               likes: c.likes_count || 0,
@@ -705,7 +705,7 @@ export default function ChapterReaderPage() {
     const newC = {
       id: `c-${Date.now()}`,
       author: user?.name || "Lector",
-      avatar: user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      avatar: user?.avatar || "/default-avatar.svg",
       text: commentText.trim(),
       time: "Ahora mismo",
       likes: 0,

@@ -9,6 +9,7 @@ interface MobileStoryCardProps {
   variant?: "portrait" | "horizontal";
   progress?: number;
   currentChapter?: number;
+  rank?: number;
   onSelectStory?: (storyId: string) => void;
 }
 
@@ -17,6 +18,7 @@ export function MobileStoryCard({
   variant = "portrait",
   progress,
   currentChapter,
+  rank,
   onSelectStory,
 }: MobileStoryCardProps) {
   const storyHref = `/historia?id=${story.id}`;
@@ -49,6 +51,23 @@ export function MobileStoryCard({
 
           {/* Gradiente para legibilidad */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+          {/* Badge de Ranking (#1, #2, #3...) */}
+          {typeof rank === "number" && (
+            <div
+              className={`absolute top-2 left-2 w-6 h-6 rounded-lg flex items-center justify-center font-black text-xs shadow-lg ${
+                rank === 1
+                  ? "bg-gradient-to-tr from-amber-400 to-yellow-300 text-slate-950 shadow-amber-500/50"
+                  : rank === 2
+                  ? "bg-gradient-to-tr from-slate-200 to-slate-400 text-slate-950 shadow-slate-400/40"
+                  : rank === 3
+                  ? "bg-gradient-to-tr from-amber-600 to-amber-400 text-white shadow-amber-600/40"
+                  : "bg-black/70 backdrop-blur-md text-white/90 border border-white/20 text-[11px]"
+              }`}
+            >
+              {rank}
+            </div>
+          )}
 
           {/* Badge de género / etiqueta arriba a la derecha */}
           {story.genre && (

@@ -352,7 +352,7 @@ export function StoryDetailModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in-scale">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in-scale">
       
       {/* Backdrop click to close */}
       <div className="absolute inset-0" onClick={closeStoryModal} />
@@ -462,7 +462,7 @@ export function StoryDetailModal() {
                 >
                   <div className="relative h-7 w-7 rounded-full overflow-hidden border shadow-xs shrink-0" style={{ borderColor: "var(--border-primary)" }}>
                     <FicImage
-                      src={selectedStory.author?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"}
+                      src={selectedStory.author?.avatar || "/default-avatar.svg"}
                       alt={selectedStory.author?.name || "Autor"}
                       fallbackType="avatar"
                     />

@@ -64,7 +64,12 @@ export function FicImage({
           className="absolute inset-0 z-10 flex items-center justify-center"
           style={{ background: "var(--bg-card-secondary)" }}
         >
-          <div className="w-full h-full opacity-30" />
+          {fallbackType === "avatar" ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src="/default-avatar.svg" alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full opacity-30" />
+          )}
         </div>
       )}
 

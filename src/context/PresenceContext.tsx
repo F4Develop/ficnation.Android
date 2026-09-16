@@ -49,7 +49,7 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
             username: p.username || "autor",
             avatar:
               p.avatar_url ||
-              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
+              "/default-avatar.svg",
             level: p.level ?? 1,
             levelTitle: p.level_title || "Iniciado",
             status: "offline",
@@ -92,7 +92,7 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
                 username: data.username || "usuario",
                 avatar:
                   data.avatar ||
-                  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
+                  "/default-avatar.svg",
                 level: data.level || 1,
                 levelTitle: data.levelTitle || "Iniciado",
                 status: "online",
@@ -112,7 +112,7 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
             username: user.username || "autor",
             avatar:
               user.avatar ||
-              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
+              "/default-avatar.svg",
             level: user.level || 1,
             levelTitle: user.levelTitle || "Iniciado",
             status: "online",

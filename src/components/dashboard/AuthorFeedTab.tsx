@@ -199,7 +199,7 @@ export function AuthorFeedTab() {
                 id: author.id,
                 name: author.name || "Autor",
                 username: author.username || "autor",
-                avatar: author.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                avatar: author.avatar_url || "/default-avatar.svg",
                 level: author.level || 1,
                 levelTitle: author.level_title || "Escritor",
               },
@@ -234,7 +234,7 @@ export function AuthorFeedTab() {
                     id: user?.id || "local-author",
                     name: localProfile.name || user?.name || "Tú",
                     username: localProfile.username || user?.username || "tu_perfil",
-                    avatar: localProfile.avatar || user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                    avatar: localProfile.avatar || user?.avatar || "/default-avatar.svg",
                     level: user?.level || 1,
                     levelTitle: "Autor",
                   },
@@ -282,7 +282,7 @@ export function AuthorFeedTab() {
       authorId: user.id,
       authorName: user.name || "Autor",
       authorUsername: user.username || "autor",
-      authorAvatar: user.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      authorAvatar: user.avatar || "/default-avatar.svg",
       authorLevel: user.level || 1,
       content: newBulletinText.trim(),
       createdAt: new Date().toISOString(),
@@ -616,7 +616,7 @@ export function AuthorFeedTab() {
                   >
                     <Link href={`/usuario?id=${author.id}`} className="flex items-center gap-2.5 min-w-0 group">
                       <div className="relative h-9 w-9 rounded-full overflow-hidden shrink-0 border group-hover:scale-105 transition-transform" style={{ borderColor: "var(--border-primary)" }}>
-                        <FicImage src={author.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80"} alt={author.name} fallbackType="avatar" />
+                        <FicImage src={author.avatar_url || "/default-avatar.svg"} alt={author.name} fallbackType="avatar" />
                       </div>
                       <div className="min-w-0">
                         <h4 className="text-xs font-bold truncate group-hover:underline" style={{ color: "var(--text-primary)" }}>

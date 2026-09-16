@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Compass, PenTool, Bookmark, Bell, User } from "lucide-react";
+import { triggerHaptic } from "@/lib/nativeBridge";
 
 export type MobileTab = "home" | "explore" | "write" | "notifications" | "library" | "profile";
 
@@ -78,6 +79,7 @@ export function MobileBottomNav({ activeTab, onSelectTab }: MobileBottomNavProps
           const Icon = item.icon;
 
           const handleClick = (e: React.MouseEvent) => {
+            triggerHaptic("light");
             if (onSelectTab) {
               e.preventDefault();
               onSelectTab(item.id);

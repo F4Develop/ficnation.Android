@@ -163,7 +163,7 @@ function ExplorarContent() {
                 author: {
                   name: author?.name || "Autor",
                   username: author?.username || "autor",
-                  avatar: author?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                  avatar: author?.avatar_url || "/default-avatar.svg",
                 },
               };
             });
@@ -205,7 +205,7 @@ function ExplorarContent() {
                   author: {
                     name: localCachedProfile.name || "Tú",
                     username: localCachedProfile.username || "autor",
-                    avatar: localCachedProfile.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                    avatar: localCachedProfile.avatar || "/default-avatar.svg",
                   },
                 });
               }

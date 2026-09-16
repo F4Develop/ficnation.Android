@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Bookmark, Clock, BookOpen, Trash2, Play } from "lucide-react";
+import { Bookmark, Clock, BookOpen, Trash2, Play, HardDriveDownload, CloudOff } from "lucide-react";
 import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { MobileBottomNav, type MobileTab } from "@/components/mobile/MobileBottomNav";
 import { MobileStoryCard } from "@/components/mobile/MobileStoryCard";
 import { useAuth } from "@/context/AuthContext";
 import { type Story } from "@/data/mockStories";
 import { createClient } from "@/lib/supabase/client";
+import { getDownloadedStoriesList, removeOfflineStory } from "@/lib/offlineStorage";
 
 export interface MobileLibraryProps {
   onSelectStory?: (storyId: string) => void;
@@ -26,8 +27,9 @@ export function MobileLibraryView({
   const { user } = useAuth();
   const [savedStories, setSavedStories] = useState<Story[]>([]);
   const [historyStories, setHistoryStories] = useState<Story[]>([]);
+  const [downloadedStories, setDownloadedStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"guardadas" | "historial">("guardadas");
+  const [activeTab, setActiveTab] = useState<"guardadas" | "historial" | "descargadas">("guardadas");
 
   useEffect(() => {
     async function loadLibrary() {
@@ -138,6 +140,8 @@ export function MobileLibraryView({
             }
           }
         }
+        // 3. Cargar historias descargadas offline
+        setDownloadedStories(getDownloadedStoriesList());
       } catch (err) {
         console.error("Error al cargar biblioteca:", err);
       } finally {
@@ -146,6 +150,13 @@ export function MobileLibraryView({
     }
 
     loadLibrary();
+
+    // Escuchar actualizaciones de historias descargadas
+    const handleOfflineUpdated = () => {
+      setDownloadedStories(getDownloadedStoriesList());
+    };
+    window.addEventListener("ficnation_offline_updated", handleOfflineUpdated);
+    return () => window.removeEventListener("ficnation_offline_updated", handleOfflineUpdated);
   }, [user?.id]);
 
   const handleRemove = async (id: string, e: React.MouseEvent) => {
@@ -167,19 +178,33 @@ export function MobileLibraryView({
     } catch {}
   };
 
+  const handleRemoveOffline = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    removeOfflineStory(id);
+    setDownloadedStories(getDownloadedStoriesList());
+  };
+
+  const currentList =
+    activeTab === "guardadas"
+      ? savedStories
+      : activeTab === "historial"
+      ? historyStories
+      : downloadedStories;
+
   return (
-    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-24 select-none">
+    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-24 select-none animate-screen-enter">
       {!hideHeader && <MobileHeader title="Mi Biblioteca" />}
 
       <main className="flex-1 space-y-4 px-4 pt-3">
         {/* Pestañas de la Biblioteca */}
-        <div className="flex border-b border-white/10">
+        <div className="flex border-b border-white/10 gap-1">
           <button
             onClick={() => setActiveTab("guardadas")}
             className={`flex-1 py-3 text-xs font-bold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "guardadas"
                 ? "border-purple-500 text-purple-400"
-                : "border-transparent text-slate-400"
+                : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
             <Bookmark className="w-3.5 h-3.5" />
@@ -187,11 +212,23 @@ export function MobileLibraryView({
           </button>
 
           <button
+            onClick={() => setActiveTab("descargadas")}
+            className={`flex-1 py-3 text-xs font-bold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === "descargadas"
+                ? "border-purple-500 text-purple-400"
+                : "border-transparent text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <HardDriveDownload className="w-3.5 h-3.5" />
+            <span>Offline ({downloadedStories.length})</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab("historial")}
             className={`flex-1 py-3 text-xs font-bold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "historial"
                 ? "border-purple-500 text-purple-400"
-                : "border-transparent text-slate-400"
+                : "border-transparent text-slate-400 hover:text-slate-200"
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -209,10 +246,10 @@ export function MobileLibraryView({
 
         {/* Contenido de la Biblioteca */}
         {!isLoading && (
-          <>
-            {(activeTab === "guardadas" ? savedStories : historyStories).length > 0 ? (
+          <div key={activeTab} className="animate-tab-enter">
+            {currentList.length > 0 ? (
               <div className="space-y-3 pt-2">
-                {(activeTab === "guardadas" ? savedStories : historyStories).map((story) => (
+                {currentList.map((story) => (
                   <div key={story.id} className="relative group">
                     <MobileStoryCard
                       story={story}
@@ -222,8 +259,17 @@ export function MobileLibraryView({
                     {activeTab === "guardadas" && (
                       <button
                         onClick={(e) => handleRemove(story.id, e)}
-                        className="absolute top-2 right-2 p-2 rounded-xl bg-black/40 text-slate-400 hover:text-red-400 active:scale-95 transition-all"
+                        className="absolute top-2 right-2 p-2 rounded-xl bg-black/50 text-slate-400 hover:text-red-400 active:scale-95 transition-all"
                         title="Eliminar de biblioteca"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                    {activeTab === "descargadas" && (
+                      <button
+                        onClick={(e) => handleRemoveOffline(story.id, e)}
+                        className="absolute top-2 right-2 p-2 rounded-xl bg-black/50 text-slate-400 hover:text-rose-400 active:scale-95 transition-all"
+                        title="Eliminar descarga offline"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -233,13 +279,23 @@ export function MobileLibraryView({
               </div>
             ) : (
               <div className="text-center py-20 space-y-3">
-                <BookOpen className="w-12 h-12 text-slate-600 mx-auto" />
+                {activeTab === "descargadas" ? (
+                  <CloudOff className="w-12 h-12 text-slate-600 mx-auto" />
+                ) : (
+                  <BookOpen className="w-12 h-12 text-slate-600 mx-auto" />
+                )}
                 <p className="text-sm font-bold text-slate-300">
-                  {activeTab === "guardadas" ? "Tu biblioteca está vacía" : "Aún no tienes historial de lectura"}
+                  {activeTab === "guardadas"
+                    ? "Tu biblioteca está vacía"
+                    : activeTab === "descargadas"
+                    ? "No tienes historias descargadas"
+                    : "Aún no tienes historial de lectura"}
                 </p>
                 <p className="text-xs text-slate-500 max-w-xs mx-auto">
                   {activeTab === "guardadas"
                     ? "Explora historias y guárdalas para encontrarlas aquí fácilmente."
+                    : activeTab === "descargadas"
+                    ? "Descarga historias desde su ficha o en el lector para disfrutar sin conexión a internet."
                     : "Los capítulos que comiences a leer aparecerán automáticamente aquí."}
                 </p>
                 {onSelectTab ? (
@@ -259,7 +315,7 @@ export function MobileLibraryView({
                 )}
               </div>
             )}
-          </>
+          </div>
         )}
       </main>
 

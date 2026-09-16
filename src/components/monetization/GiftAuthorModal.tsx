@@ -257,7 +257,7 @@ export function GiftAuthorModal({
               <div className="flex items-center gap-3">
                 <div className="relative h-11 w-11 rounded-2xl overflow-hidden border shrink-0" style={{ borderColor: "var(--border-primary)" }}>
                   <FicImage
-                    src={author.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80"}
+                    src={author.avatar || "/default-avatar.svg"}
                     alt={author.name}
                     fallbackType="avatar"
                   />

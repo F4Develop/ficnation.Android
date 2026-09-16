@@ -94,7 +94,7 @@ export function UserAvatarWithFrame({
         } ${frameDefinition?.glowClass || ""}`}
       >
         <FicImage
-          src={src || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80"}
+          src={src || "/default-avatar.svg"}
           alt={alt}
           fallbackType="avatar"
           className="w-full h-full object-cover rounded-full"

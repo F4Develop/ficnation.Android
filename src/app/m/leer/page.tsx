@@ -25,9 +25,26 @@ import {
   Pause,
   X,
   Flame,
+  Download,
+  CloudOff,
+  HardDriveDownload,
+  CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import {
+  hasUserVotedChapter,
+  toggleChapterVote,
+  recordUniqueStoryView,
+  hasUserVotedStory,
+} from "@/lib/storyInteractions";
+import {
+  getOfflineChapter,
+  getOfflineStory,
+  autoPrefetchNextChapters,
+  downloadStoryForOffline,
+  isStoryDownloadedOffline,
+} from "@/lib/offlineStorage";
 
 export type ThemeMode = "dark" | "sepia" | "light" | "oled";
 export type FontSizeMode = "sm" | "base" | "lg" | "xl";
@@ -86,6 +103,13 @@ export function MobileReaderView({
   const [lineHeight, setLineHeight] = useState<"normal" | "relaxed" | "loose">("relaxed");
   const [isLoading, setIsLoading] = useState(true);
 
+  // Estado de descarga y modo offline
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadPercent, setDownloadPercent] = useState(0);
+  const [downloadStatusText, setDownloadStatusText] = useState("");
+
   // Progreso de lectura
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -98,6 +122,13 @@ export function MobileReaderView({
   const [isSpeechPaused, setIsSpeechPaused] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Comprobar estado offline descargado
+  useEffect(() => {
+    if (storyId) {
+      setIsDownloaded(isStoryDownloadedOffline(storyId));
+    }
+  }, [storyId]);
 
   // 1. Escuchar scroll para la barra de progreso
   useEffect(() => {
@@ -113,7 +144,7 @@ export function MobileReaderView({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 2. Cargar contenido del capítulo desde Supabase
+  // 2. Cargar contenido del capítulo desde Supabase o Caché Offline
   useEffect(() => {
     if (!storyId) {
       setIsLoading(false);
@@ -129,10 +160,40 @@ export function MobileReaderView({
         setIsSpeechPaused(false);
       }
 
+      const isOfflineDevice = typeof navigator !== "undefined" && !navigator.onLine;
+
       try {
+        // A) Intentar primero desde el Caché Offline si el dispositivo está sin internet
+        if (isOfflineDevice) {
+          const offlineStory = getOfflineStory(storyId);
+          const offlineChap = getOfflineChapter(storyId, currentChapter);
+
+          if (offlineStory && offlineChap) {
+            setStoryTitle(offlineStory.title);
+            setTotalChapters(offlineStory.totalChapters || offlineStory.chapters.length || 1);
+            setChaptersList(
+              offlineStory.chapters.map((c) => ({
+                id: c.id,
+                chapterNumber: c.chapterNumber,
+                title: c.title,
+              }))
+            );
+            setChapterTitle(offlineChap.title);
+            setRawContent(offlineChap.content);
+            setIsHtmlContent(offlineChap.isHtml);
+            if (!offlineChap.isHtml) {
+              setParagraphs(offlineChap.content.split("\n\n").filter(Boolean));
+            }
+            setIsOfflineMode(true);
+            setIsLoading(false);
+            window.scrollTo({ top: 0, behavior: "instant" });
+            return;
+          }
+        }
+
         const supabase = createClient();
 
-        // Cargar datos de la historia y lista de capítulos
+        // B) Cargar datos de la historia y lista de capítulos online
         const { data: sData } = await supabase
           .from("stories")
           .select(`
@@ -160,7 +221,7 @@ export function MobileReaderView({
           setTotalChapters(chList.length > 0 ? chList.length : sData.chapters_count || 1);
         }
 
-        // Cargar contenido exacto del capítulo
+        // C) Cargar contenido exacto del capítulo
         const { data: chData } = await supabase
           .from("chapters")
           .select("id, title, content")
@@ -173,37 +234,60 @@ export function MobileReaderView({
           const text = chData.content;
           setRawContent(text);
 
-          // Detectar si el contenido fue redactado en TipTap (HTML) o texto plano
           const hasHtml = /<\/?[a-z][\s\S]*>/i.test(text);
           setIsHtmlContent(hasHtml);
           if (!hasHtml) {
             setParagraphs(text.split("\n\n").filter(Boolean));
           }
-        } else {
-          // Fallback a almacenamiento local si existe
-          let foundText = "";
-          let foundChTitle = `Capítulo ${currentChapter}`;
-          try {
-            const localChapters = JSON.parse(localStorage.getItem(`ficnation_chapters_${storyId}`) || "[]");
-            const localChap = localChapters.find((c: any) => c.chapterNumber === currentChapter);
-            if (localChap && localChap.content) {
-              foundChTitle = localChap.title || `Capítulo ${currentChapter}`;
-              foundText = localChap.content;
-            }
-          } catch {}
+          setIsOfflineMode(false);
 
-          if (foundText) {
-            setChapterTitle(foundChTitle);
-            setRawContent(foundText);
-            const hasHtml = /<\/?[a-z][\s\S]*>/i.test(foundText);
-            setIsHtmlContent(hasHtml);
-            if (!hasHtml) setParagraphs(foundText.split("\n\n").filter(Boolean));
+          // Precarga automática en segundo plano de los siguientes capítulos
+          autoPrefetchNextChapters(storyId, currentChapter);
+        } else {
+          // Fallback a almacenamiento offline o local si no vino de la BD
+          const offlineChap = getOfflineChapter(storyId, currentChapter);
+          if (offlineChap && offlineChap.content) {
+            setChapterTitle(offlineChap.title);
+            setRawContent(offlineChap.content);
+            setIsHtmlContent(offlineChap.isHtml);
+            if (!offlineChap.isHtml) setParagraphs(offlineChap.content.split("\n\n").filter(Boolean));
+            setIsOfflineMode(true);
           } else {
-            setChapterTitle(`Capítulo ${currentChapter}`);
-            setRawContent("<p>Este capítulo aún no cuenta con texto redactado por el autor.</p>");
-            setIsHtmlContent(true);
+            let foundText = "";
+            let foundChTitle = `Capítulo ${currentChapter}`;
+            try {
+              const localChapters = JSON.parse(localStorage.getItem(`ficnation_chapters_${storyId}`) || "[]");
+              const localChap = localChapters.find((c: any) => c.chapterNumber === currentChapter);
+              if (localChap && localChap.content) {
+                foundChTitle = localChap.title || `Capítulo ${currentChapter}`;
+                foundText = localChap.content;
+              }
+            } catch {}
+
+            if (foundText) {
+              setChapterTitle(foundChTitle);
+              setRawContent(foundText);
+              const hasHtml = /<\/?[a-z][\s\S]*>/i.test(foundText);
+              setIsHtmlContent(hasHtml);
+              if (!hasHtml) setParagraphs(foundText.split("\n\n").filter(Boolean));
+            } else {
+              setChapterTitle(`Capítulo ${currentChapter}`);
+              setRawContent("<p>Este capítulo aún no cuenta con texto redactado por el autor.</p>");
+              setIsHtmlContent(true);
+            }
           }
         }
+
+        // Registrar vista única real del capítulo
+        recordUniqueStoryView({
+          storyId,
+          chapterNumber: currentChapter,
+          userId: user?.id,
+        });
+
+        // Comprobar si ya ha votado este capítulo
+        const voted = hasUserVotedChapter(storyId, currentChapter, user?.id);
+        setHasVoted(voted);
 
         // Guardar progreso en Supabase si el usuario está autenticado
         if (user?.id) {
@@ -233,6 +317,16 @@ export function MobileReaderView({
         } catch {}
       } catch (err) {
         console.error("Error al cargar capítulo:", err);
+        // Fallback de emergencia a caché offline
+        const offlineStory = getOfflineStory(storyId);
+        const offlineChap = getOfflineChapter(storyId, currentChapter);
+        if (offlineChap) {
+          setChapterTitle(offlineChap.title);
+          setRawContent(offlineChap.content);
+          setIsHtmlContent(offlineChap.isHtml);
+          if (!offlineChap.isHtml) setParagraphs(offlineChap.content.split("\n\n").filter(Boolean));
+          setIsOfflineMode(true);
+        }
       } finally {
         setIsLoading(false);
         window.scrollTo({ top: 0, behavior: "instant" });
@@ -240,7 +334,23 @@ export function MobileReaderView({
     }
 
     loadChapterData();
-  }, [storyId, currentChapter]);
+  }, [storyId, currentChapter, user?.id]);
+
+  // Manejador de descarga offline completa
+  const handleDownloadOffline = async () => {
+    if (isDownloading || !storyId) return;
+    setIsDownloading(true);
+    setDownloadPercent(10);
+    setDownloadStatusText("Preparando descarga...");
+    const res = await downloadStoryForOffline(storyId, (pct, msg) => {
+      setDownloadPercent(pct);
+      setDownloadStatusText(msg);
+    });
+    setIsDownloading(false);
+    if (res.success) {
+      setIsDownloaded(true);
+    }
+  };
 
   // Manejo de cambio de capítulos
   const goToChapter = (chapNum: number) => {
@@ -264,12 +374,13 @@ export function MobileReaderView({
 
   // Votar por el capítulo / historia
   const handleVote = async () => {
-    if (hasVoted) return;
-    setHasVoted(true);
-    try {
-      const supabase = createClient();
-      await supabase.rpc("increment_story_votes", { story_id: storyId });
-    } catch {}
+    const { hasVoted: nextVoted } = await toggleChapterVote({
+      storyId,
+      chapterNumber: currentChapter,
+      user: user ? { id: user.id, name: user.name, avatar: user.avatar } : null,
+      storyTitle,
+    });
+    setHasVoted(nextVoted);
   };
 
   // Guardar en Biblioteca
@@ -413,6 +524,12 @@ export function MobileReaderView({
           showControls ? "translate-y-0" : "-translate-y-full"
         } bg-[#0b0f19]/95 backdrop-blur-xl border-b border-purple-500/20 pt-safe text-white shadow-xl`}
       >
+        {isOfflineMode && (
+          <div className="bg-amber-500/20 border-b border-amber-500/30 px-3 py-1 flex items-center justify-center gap-1.5 text-[10px] font-bold text-amber-300">
+            <CloudOff className="w-3 h-3 text-amber-400 shrink-0" />
+            <span>Leyendo en Modo Offline (Caché Local)</span>
+          </div>
+        )}
         <div className="px-4 h-14 flex items-center justify-between">
           <button
             onClick={handleBack}
@@ -799,6 +916,47 @@ export function MobileReaderView({
                 className="p-1 text-slate-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Barra de Descarga Offline */}
+            <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <HardDriveDownload className={`w-4 h-4 shrink-0 ${isDownloaded ? "text-emerald-400" : "text-purple-400"}`} />
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-white truncate">
+                    {isDownloaded ? "Historia Descargada Offline" : "Descargar para Leer Offline"}
+                  </p>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    {isDownloaded ? "100% disponible sin conexión" : isDownloading ? downloadStatusText : "Guarda todos los capítulos"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleDownloadOffline}
+                disabled={isDownloading || isDownloaded}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 shrink-0 flex items-center gap-1 ${
+                  isDownloaded
+                    ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 cursor-default"
+                    : isDownloading
+                    ? "bg-purple-600 text-white animate-download-pulse"
+                    : "bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-600/30"
+                }`}
+              >
+                {isDownloaded ? (
+                  <>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Guardada</span>
+                  </>
+                ) : isDownloading ? (
+                  <span>{downloadPercent}%</span>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Descargar</span>
+                  </>
+                )}
               </button>
             </div>
 

@@ -113,7 +113,7 @@ const DEFAULT_COMMUNITY_MEMBERS = [
     id: "f4-creator",
     name: "F4",
     username: "f4",
-    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+    avatar: "/default-avatar.svg",
     level: 6,
     levelTitle: "Creador",
     isVerified: true,
@@ -362,7 +362,7 @@ export default function DashboardContent() {
                 (isCurrentUser ? user?.avatar : null) ||
                 localProfile?.avatar ||
                 s.author_avatar ||
-                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80";
+                "/default-avatar.svg";
 
               return {
                 id: s.id,
@@ -411,7 +411,7 @@ export default function DashboardContent() {
                 id: lu.author?.id || user?.id,
                 name: lu.author?.name || localProfile.name || "Tú",
                 username: lu.author?.username || localProfile.username || "autor",
-                avatar: lu.author?.avatar || localProfile.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                avatar: lu.author?.avatar || localProfile.avatar || "/default-avatar.svg",
                 isVerified: isUserVerified(lu.author?.username || localProfile.username || user?.username),
               },
             });
@@ -527,7 +527,7 @@ export default function DashboardContent() {
               id: p.id,
               name: p.name || "Autor",
               username: uName,
-              avatar: p.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+              avatar: p.avatar_url || "/default-avatar.svg",
               level: lvl,
               levelTitle: isCreator ? "Creador" : lvl > 3 ? "Escritor Errante" : "Iniciado",
               isVerified,

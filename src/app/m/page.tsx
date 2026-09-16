@@ -1,7 +1,18 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { Sparkles, Flame, BookOpen, Star, Compass, ChevronRight, Play, Bookmark } from "lucide-react";
+import { useState, useEffect, Suspense, useMemo } from "react";
+import {
+  Sparkles,
+  Flame,
+  BookOpen,
+  Star,
+  Compass,
+  ChevronRight,
+  Play,
+  Bookmark,
+  Users,
+  CheckCircle2,
+} from "lucide-react";
 import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { MobileBottomNav, type MobileTab } from "@/components/mobile/MobileBottomNav";
 import { MobileStoryCard } from "@/components/mobile/MobileStoryCard";
@@ -15,7 +26,7 @@ import { MobileNotificationsView } from "@/app/m/notificaciones/page";
 import { createClient } from "@/lib/supabase/client";
 import { type Story } from "@/data/mockStories";
 
-const GENRES = ["Todos", "Fantasía", "Romance", "Anime", "Isekai", "Ciencia Ficción", "Misterio", "Acción"];
+const GENRES = ["Todos", "Fantasía", "Romance", "Anime / Fanfic", "Isekai", "Ciencia Ficción", "Misterio", "Slice of Life"];
 
 export type MobileScreen =
   | { type: "home" }
@@ -27,6 +38,54 @@ export type MobileScreen =
   | { type: "story"; storyId: string }
   | { type: "reader"; storyId: string; chapter: number };
 
+interface AnnouncementBanner {
+  id: string;
+  badge: string;
+  badgeColor: string;
+  title: string;
+  description: string;
+  ctaText: string;
+  screenTarget: MobileScreen;
+  icon: string;
+  gradientBg: string;
+}
+
+const DASHBOARD_ANNOUNCEMENTS: AnnouncementBanner[] = [
+  {
+    id: "banner-1",
+    badge: "ACTUALIZACIÓN V2.0",
+    badgeColor: "from-purple-500 to-indigo-500",
+    title: "¡FicNation Android Oficial!",
+    description: "Modo de lectura offline, nuevo editor con tipografías y efectos de texto inmersivos.",
+    ctaText: "Explorar",
+    screenTarget: { type: "explore" },
+    icon: "🚀",
+    gradientBg: "from-purple-950/80 via-indigo-950/60 to-[#070a12]",
+  },
+  {
+    id: "banner-2",
+    badge: "EVENTO DE AUTORES",
+    badgeColor: "from-amber-500 to-orange-500",
+    title: "Torneo de Fanfics & Obras",
+    description: "Escribe tu nuevo capítulo esta semana y compite por premios de hasta 5,000 monedas.",
+    ctaText: "Escribir",
+    screenTarget: { type: "write" },
+    icon: "🏆",
+    gradientBg: "from-amber-950/70 via-purple-950/50 to-[#070a12]",
+  },
+  {
+    id: "banner-3",
+    badge: "COMUNIDAD & CLUB",
+    badgeColor: "from-emerald-500 to-teal-500",
+    title: "Historias Originales Cada Día",
+    description: "Descubre universos creados por autores hispanos y apoya con votos y comentarios.",
+    ctaText: "Biblioteca",
+    screenTarget: { type: "library" },
+    icon: "✨",
+    gradientBg: "from-emerald-950/60 via-slate-950/60 to-[#070a12]",
+  },
+];
+
 function MobileAppContainer() {
   const [screen, setScreen] = useState<MobileScreen>({ type: "home" });
   const [history, setHistory] = useState<MobileScreen[]>([{ type: "home" }]);
@@ -35,6 +94,7 @@ function MobileAppContainer() {
   const [selectedGenre, setSelectedGenre] = useState("Todos");
   const [recentRead, setRecentRead] = useState<{ storyId: string; chapter: number; progress: number; title: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
   // Navegación en memoria (0 recargas, compatible con botón atrás de Android)
   const navigateTo = (next: MobileScreen) => {
@@ -75,6 +135,14 @@ function MobileAppContainer() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  // Timer para el banner
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBannerIndex((prev) => (prev + 1) % DASHBOARD_ANNOUNCEMENTS.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   // 1. Cargar historias reales de Supabase
   useEffect(() => {
     async function loadStories() {
@@ -105,12 +173,11 @@ function MobileAppContainer() {
           `)
           .eq("is_published", true)
           .order("created_at", { ascending: false })
-          .limit(20);
+          .limit(30);
 
         if (!error && data) {
           const mapped: Story[] = data
             .filter((s: any) => {
-              // REGLA: Las historias sin capítulos deben estar en borradores y no mostrarse en el inicio
               const publishedChapters = Array.isArray(s.chapters)
                 ? s.chapters.filter((c: any) => c.is_published !== false)
                 : [];
@@ -159,7 +226,33 @@ function MobileAppContainer() {
       }
     } catch {}
 
-    // 3. Revisar si la URL trae algún parámetro inicial (ej: ?storyId=... o ?tab=...)
+    // 3. Escuchar actualizaciones de votos y lecturas en tiempo real
+    const handleStoryVoted = (e: any) => {
+      if (e.detail?.storyId) {
+        setStories((prev) =>
+          prev.map((s) =>
+            s.id === e.detail.storyId ? { ...s, votes: String(e.detail.newCount) } : s
+          )
+        );
+      }
+    };
+
+    const handleStoryViewed = (e: any) => {
+      if (e.detail?.storyId) {
+        setStories((prev) =>
+          prev.map((s) =>
+            s.id === e.detail.storyId ? { ...s, reads: String(e.detail.readsCount) } : s
+          )
+        );
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("ficnation_story_voted", handleStoryVoted);
+      window.addEventListener("ficnation_story_viewed", handleStoryViewed);
+    }
+
+    // 4. Revisar si la URL trae algún parámetro inicial (ej: ?storyId=... o ?tab=...)
     try {
       const params = new URLSearchParams(window.location.search);
       const sId = params.get("storyId") || params.get("id");
@@ -174,89 +267,164 @@ function MobileAppContainer() {
         setScreen({ type: tab });
       }
     } catch {}
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("ficnation_story_voted", handleStoryVoted);
+        window.removeEventListener("ficnation_story_viewed", handleStoryViewed);
+      }
+    };
   }, []);
 
   // ════════════ ROUTER EN MEMORIA SEGÚN PANTALLA ACTIVA ════════════
   if (screen.type === "story") {
     return (
-      <MobileStoryDetailView
-        storyId={screen.storyId}
-        onBack={goBack}
-        onReadStory={(storyId, chapter) => navigateTo({ type: "reader", storyId, chapter })}
-      />
+      <div key={`story-${screen.storyId}`} className="animate-screen-enter">
+        <MobileStoryDetailView
+          storyId={screen.storyId}
+          onBack={goBack}
+          onReadStory={(storyId, chapter) => navigateTo({ type: "reader", storyId, chapter })}
+        />
+      </div>
     );
   }
 
   if (screen.type === "reader") {
     return (
-      <MobileReaderView
-        storyId={screen.storyId}
-        chapterNumber={screen.chapter}
-        onBack={goBack}
-        onNavigateChapter={(chapter) => {
-          setScreen({ type: "reader", storyId: screen.storyId, chapter });
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
-      />
+      <div key={`reader-${screen.storyId}-${screen.chapter}`} className="animate-screen-enter">
+        <MobileReaderView
+          storyId={screen.storyId}
+          chapterNumber={screen.chapter}
+          onBack={goBack}
+          onNavigateChapter={(chapter) => {
+            setScreen({ type: "reader", storyId: screen.storyId, chapter });
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        />
+      </div>
     );
   }
 
   if (screen.type === "explore") {
     return (
-      <MobileExploreView
-        onSelectStory={(storyId) => navigateTo({ type: "story", storyId })}
-        onSelectTab={(tab) => navigateTo({ type: tab })}
-      />
+      <div key="explore-screen" className="animate-screen-enter">
+        <MobileExploreView
+          onSelectStory={(storyId) => navigateTo({ type: "story", storyId })}
+          onSelectTab={(tab) => navigateTo({ type: tab })}
+        />
+      </div>
     );
   }
 
   if (screen.type === "library") {
     return (
-      <MobileLibraryView
-        onSelectStory={(storyId) => navigateTo({ type: "story", storyId })}
-        onSelectTab={(tab) => navigateTo({ type: tab })}
-      />
+      <div key="library-screen" className="animate-screen-enter">
+        <MobileLibraryView
+          onSelectStory={(storyId) => navigateTo({ type: "story", storyId })}
+          onSelectTab={(tab) => navigateTo({ type: tab })}
+        />
+      </div>
     );
   }
 
   if (screen.type === "profile") {
     return (
-      <MobileProfileView
-        onSelectTab={(tab) => navigateTo({ type: tab })}
-      />
+      <div key="profile-screen" className="animate-screen-enter">
+        <MobileProfileView
+          onSelectTab={(tab) => navigateTo({ type: tab })}
+        />
+      </div>
     );
   }
 
   if (screen.type === "notifications") {
     return (
-      <MobileNotificationsView
-        onSelectTab={(tab) => navigateTo({ type: tab })}
-      />
+      <div key="notifications-screen" className="animate-screen-enter">
+        <MobileNotificationsView
+          onSelectTab={(tab) => navigateTo({ type: tab })}
+        />
+      </div>
     );
   }
 
   if (screen.type === "write") {
     return (
-      <MobileWriterView
-        onSelectTab={(tab) => navigateTo({ type: tab })}
-      />
+      <div key="write-screen" className="animate-screen-enter">
+        <MobileWriterView
+          onSelectTab={(tab) => navigateTo({ type: tab })}
+        />
+      </div>
     );
   }
 
   // ════════════ PANTALLA PRINCIPAL: HOME FEED ════════════
   const featuredStory = stories.length > 0 ? stories[0] : null;
-  const popularStories = stories.length > 1 ? stories.slice(1, 7) : stories;
+  const popularStories = [...stories].sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0)).slice(0, 8);
+  const recentStories = stories.slice(0, 8);
   const filteredFeed = selectedGenre === "Todos"
     ? (stories.length > 1 ? stories.slice(1) : stories)
     : stories.filter((s) => s.genre?.toLowerCase() === selectedGenre.toLowerCase());
 
+  const activeBanner = DASHBOARD_ANNOUNCEMENTS[currentBannerIndex];
+
   return (
-    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-24 select-none">
+    <div key="home-screen" className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col pb-24 select-none animate-screen-enter">
       {/* Header fijo superior */}
-      <MobileHeader onSearchClick={() => navigateTo({ type: "explore" })} />
+      <MobileHeader onSearchClick={() => navigateTo({ type: "explore" })} onProfileClick={() => navigateTo({ type: "profile" })} />
 
       <main className="flex-1 space-y-6 pt-2">
-        {/* ════════════ 1. HERO BANNER DESTACADO ════════════ */}
+
+        {/* ════════════ 1. BANNER DINÁMICO DE NOTICIAS Y ACTUALIZACIONES ════════════ */}
+        <section className="px-4">
+          <div className={`relative overflow-hidden rounded-3xl p-4 bg-gradient-to-br ${activeBanner.gradientBg} border border-purple-500/25 shadow-xl transition-all duration-500`}>
+            <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 rounded-full bg-purple-500/15 blur-2xl pointer-events-none" />
+
+            <div className="relative z-10 flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wide text-white bg-gradient-to-r ${activeBanner.badgeColor} shadow-xs`}>
+                    {activeBanner.badge}
+                  </span>
+                  <span className="text-xs">{activeBanner.icon}</span>
+                </div>
+
+                <h2 className="text-sm font-black text-white leading-snug truncate">
+                  {activeBanner.title}
+                </h2>
+
+                <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                  {activeBanner.description}
+                </p>
+              </div>
+
+              <button
+                onClick={() => navigateTo(activeBanner.screenTarget)}
+                className="shrink-0 self-center px-3 py-1.5 rounded-2xl bg-white/10 active:scale-95 border border-white/20 text-white text-xs font-bold flex items-center gap-1 shadow-md backdrop-blur-md transition-all"
+              >
+                <span>{activeBanner.ctaText}</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Paginación con Puntos */}
+            <div className="flex items-center justify-center gap-1.5 pt-3 mt-2 border-t border-white/10">
+              {DASHBOARD_ANNOUNCEMENTS.map((b, idx) => (
+                <button
+                  key={b.id}
+                  onClick={() => setCurrentBannerIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentBannerIndex
+                      ? "w-6 bg-gradient-to-r from-purple-400 to-indigo-400"
+                      : "w-1.5 bg-white/20 hover:bg-white/40"
+                  }`}
+                  aria-label={`Ver noticia ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════ 2. HERO BANNER DESTACADO ════════════ */}
         {featuredStory && (
           <section className="px-4">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 aspect-[16/10] bg-slate-900">
@@ -307,7 +475,7 @@ function MobileAppContainer() {
           </section>
         )}
 
-        {/* ════════════ 2. CONTINUAR LEYENDO (Si existe progreso) ════════════ */}
+        {/* ════════════ 3. CONTINUAR LEYENDO (Si existe progreso) ════════════ */}
         {recentRead && (
           <section className="px-4 space-y-2">
             <div className="flex items-center justify-between">
@@ -337,38 +505,44 @@ function MobileAppContainer() {
           </section>
         )}
 
-        {/* ════════════ 3. CARROUSEL: MÁS POPULARES ════════════ */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between px-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Flame className="w-4 h-4 text-orange-400" />
-              <span>Populares de la Semana</span>
-            </h3>
-            <button
-              onClick={() => navigateTo({ type: "explore" })}
-              className="text-xs text-purple-400 font-semibold flex items-center gap-0.5 active:scale-95"
-            >
-              <span>Ver más</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-none snap-x snap-mandatory">
-            {popularStories.map((story) => (
-              <div key={story.id} className="snap-start">
-                <MobileStoryCard
-                  story={story}
-                  variant="portrait"
-                  onSelectStory={(id) => navigateTo({ type: "story", storyId: id })}
-                />
+        {/* ════════════ 4. CARRUSEL: TOP TENDENCIAS (CON RANKING #1, #2, #3) ════════════ */}
+        {popularStories.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between px-4">
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                  <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
+                  <span>Top Tendencias</span>
+                </h3>
+                <p className="text-[10px] text-slate-400">Las historias más leídas de la semana</p>
               </div>
-            ))}
-          </div>
-        </section>
+              <button
+                onClick={() => navigateTo({ type: "explore" })}
+                className="text-xs text-purple-400 font-bold flex items-center gap-0.5 active:scale-95"
+              >
+                <span>Ver todo</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-        {/* ════════════ 4. CHIPS DE GÉNEROS RÁPIDOS ════════════ */}
+            <div className="flex gap-3.5 overflow-x-auto px-4 pb-2 no-scrollbar snap-x snap-mandatory">
+              {popularStories.map((story, idx) => (
+                <div key={story.id} className="snap-start">
+                  <MobileStoryCard
+                    story={story}
+                    variant="portrait"
+                    rank={idx + 1}
+                    onSelectStory={(id) => navigateTo({ type: "story", storyId: id })}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ════════════ 5. CHIPS DE GÉNEROS RÁPIDOS ════════════ */}
         <section className="space-y-2">
-          <div className="flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-none">
+          <div className="flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar">
             {GENRES.map((genre) => {
               const isSelected = selectedGenre === genre;
               return (
@@ -388,16 +562,43 @@ function MobileAppContainer() {
           </div>
         </section>
 
-        {/* ════════════ 5. FEED VERTICAL: RECOMENDADAS ════════════ */}
+        {/* ════════════ 6. CARRUSEL: RECIÉN PUBLICADAS ════════════ */}
+        {recentStories.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between px-4">
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-purple-400" />
+                  <span>Recién Salidas del Horno</span>
+                </h3>
+                <p className="text-[10px] text-slate-400">Nuevos capítulos y lanzamientos</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3.5 overflow-x-auto px-4 pb-2 no-scrollbar snap-x snap-mandatory">
+              {recentStories.map((story) => (
+                <div key={story.id} className="snap-start">
+                  <MobileStoryCard
+                    story={story}
+                    variant="portrait"
+                    onSelectStory={(id) => navigateTo({ type: "story", storyId: id })}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ════════════ 7. FEED VERTICAL: RECOMENDADAS ════════════ */}
         <section className="px-4 space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-purple-400" />
+            <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-purple-400" />
               <span>
-                {selectedGenre === "Todos" ? "Nuevas Obras Recomendadas" : `Historias de ${selectedGenre}`}
+                {selectedGenre === "Todos" ? "Descubre Más Historias" : `Obras de ${selectedGenre}`}
               </span>
             </h3>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-400 font-bold">
               {filteredFeed.length} títulos
             </span>
           </div>

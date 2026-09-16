@@ -55,8 +55,39 @@ export default function LoginPage() {
         return;
       }
 
-      if (data.session) {
-        router.push("/dashboard");
+      if (data.session && data.user) {
+        // Verificar si el usuario ya completó la configuración inicial de su perfil
+        const isLocalCompleted =
+          typeof window !== "undefined" &&
+          localStorage.getItem("ficnation_onboarding_completed_" + data.user.id) === "true";
+
+        if (isLocalCompleted) {
+          router.push("/dashboard");
+          return;
+        }
+
+        try {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("avatar_url, bio, username")
+            .eq("id", data.user.id)
+            .maybeSingle();
+
+          const hasCompletedBio = prof?.bio && prof.bio !== "Nuevo miembro en FicNation." && prof.bio.trim().length > 0;
+          const hasCustomAvatar = prof?.avatar_url && !prof.avatar_url.includes("placeholder");
+
+          if (hasCompletedBio || hasCustomAvatar) {
+            if (typeof window !== "undefined") {
+              localStorage.setItem("ficnation_onboarding_completed_" + data.user.id, "true");
+            }
+            router.push("/dashboard");
+          } else {
+            // Si interrumpió la configuración inicial, redirigir automáticamente a completarla
+            router.push("/register");
+          }
+        } catch {
+          router.push("/dashboard");
+        }
       }
     } catch {
       setErrorMessage("Ocurrió un error inesperado al intentar iniciar sesión.");

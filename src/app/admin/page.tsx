@@ -139,7 +139,7 @@ export default function AdminPage() {
         } else {
           // Fallback de demostración
           setUsersList([
-            { id: "f4-master-id", name: "F4", username: "f4", avatar_url: user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", earned_coins: 5000, xp: 8500 },
+            { id: "f4-master-id", name: "F4", username: "f4", avatar_url: user?.avatar || "/default-avatar.svg", earned_coins: 5000, xp: 8500 },
             { id: "demo-1", name: "Just_G", username: "just_g", avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", earned_coins: 250, xp: 1200 },
             { id: "demo-2", name: "Marjos04", username: "marjos04", avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", earned_coins: 100, xp: 800 },
             { id: "demo-3", name: "Raecher Sterling2", username: "raecher2", avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", earned_coins: 400, xp: 2100 },
@@ -147,7 +147,7 @@ export default function AdminPage() {
         }
       } catch {
         setUsersList([
-          { id: "f4-master-id", name: "F4", username: "f4", avatar_url: user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", earned_coins: 5000, xp: 8500 },
+          { id: "f4-master-id", name: "F4", username: "f4", avatar_url: user?.avatar || "/default-avatar.svg", earned_coins: 5000, xp: 8500 },
         ]);
       }
 
@@ -242,7 +242,7 @@ export default function AdminPage() {
       actor: {
         id: user?.id || "f4-admin",
         name: "Administración FicNation",
-        avatar: user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
+        avatar: user?.avatar || "/default-avatar.svg",
       },
       type: "admin_announcement",
       customMessage: `${notifTitle}: ${notifMessage}`,
@@ -534,7 +534,7 @@ export default function AdminPage() {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-2xl overflow-hidden bg-zinc-800 border border-white/10 shrink-0">
                               <img
-                                src={u.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}
+                                src={u.avatar_url || "/default-avatar.svg"}
                                 alt={u.name}
                                 className="w-full h-full object-cover"
                               />
