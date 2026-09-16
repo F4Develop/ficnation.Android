@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # Permite compilar manualmente con 1 clic desde GitHub
+  workflow_dispatch: # Permite compilar manualmente con 1 clic desde GitHub Actions
 
 jobs:
   build-apk:
@@ -22,14 +22,16 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: ☕ Configurar Java 21 (JDK para Android Gradle)
+      - name: ☕ Configurar Java 17 (JDK para Android Gradle)
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '17'
 
-      - name: 🤖 Configurar Android SDK
-        uses: android-actions/setup-android@v3
+      - name: 📝 Aceptar Licencias de Android SDK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses 2>/dev/null || true
 
       - name: 📦 Instalar dependencias npm
         run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
@@ -40,11 +42,11 @@ jobs:
       - name: 🔄 Sincronizar Capacitor con Android
         run: npx cap sync android
 
-      - name: 🔨 Compilar APK con Gradle en la nube
+      - name: 🔨 Compilar APK con Gradle
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: 🚀 Subir APK generado como descarga (Artifact)
         uses: actions/upload-artifact@v4
