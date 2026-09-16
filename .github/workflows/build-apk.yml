@@ -22,11 +22,11 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - name: ☕ Configurar Java 17 (JDK para Android Gradle)
+      - name: ☕ Configurar Java 21 (JDK para Capacitor 7 y Android SDK 36)
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
 
       - name: 📝 Aceptar Licencias de Android SDK
         run: |
